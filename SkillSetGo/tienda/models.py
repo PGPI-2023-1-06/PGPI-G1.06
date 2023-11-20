@@ -5,7 +5,7 @@ import re
 from django.forms import ValidationError
 
 class Cliente(models.Model):
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False)
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False, default='')
     nombre = models.CharField(max_length=200, null=True, unique=True)
     apellidos = models.CharField(max_length=200, null=True)
     correo = models.EmailField(max_length=200, null=True, unique=True)
@@ -25,11 +25,11 @@ class Cliente(models.Model):
                     
 class Clase(models.Model):
     
-    nombre = models.CharField(max_length=200, null=False, blank=False) 
+    nombre = models.CharField(max_length=200, null=False, blank=False, default='') 
     descripcion = models.TextField()
     nivel = models.CharField(max_length=200, null=True)
     instructor = models.CharField(max_length=200, null=True)
-    requisitos = models.TextField()
+    requisitos = models.TextField(null=True)
     precio = models.FloatField()
     horario = models.CharField(max_length=200, null=True)
     duracion = models.IntegerField(default=0, null=False, blank=True)

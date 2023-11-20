@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render, get_object_or_404
 
-from SkillSetGo.tienda.forms import *
+from .forms import ClaseForm
 from .models import *
 
 def tienda(request):
