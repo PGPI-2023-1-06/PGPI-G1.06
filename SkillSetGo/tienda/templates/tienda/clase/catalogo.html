@@ -1,0 +1,19 @@
+{% extends "tienda/main.html" %}
+
+{% block title %}SkillSetGo{% endblock %}
+
+{% block content %}
+
+    <h1>SkillSetGo</h1>
+    {% for clase in clases %}
+        <h2>
+            <a href="{% url 'tienda:clase_detalle' clase.id %}">
+                {{ clase.nombre }}
+            </a>
+        </h2>
+        <p class="date">
+        Precio {{ clase.precio }}; Descripcion {{ clase.descripcion }}
+        </p>
+        
+    {% endfor %}
+{% endblock %}

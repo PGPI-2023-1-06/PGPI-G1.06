@@ -1,0 +1,11 @@
+{% extends "tienda/main.html" %}
+
+{% block title %}{{ clase.nombre }}{% endblock %}
+
+{% block content %}
+    <h1>{{ clase.nombre }}</h1>
+    <p class="date">
+        Precio: {{ clase.precio }}
+    </p>
+    {{ clase.descripcion|linebreaks }}
+{% endblock %}
