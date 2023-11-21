@@ -9,7 +9,15 @@ def tienda(request):
 
 
 def carrito(request):
-    context = {}
+    if request.user.is_authenticated:
+        cliente = request.user.cliente
+        pedido, created = Pedido.objects.get_or_create(cliente=cliente, completado=False)
+        items = pedido.itemspedido_set.all()
+    else:
+        items = []
+        pedido = {'get_pedidos_carrito':0, 'get_total_carrito':0}
+
+    context = {'items':items, 'pedido':pedido}
     return render(request, 'tienda/carrito.html', context)
 
 def pedido(request):

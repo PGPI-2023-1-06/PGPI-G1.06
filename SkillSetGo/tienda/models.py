@@ -48,6 +48,18 @@ class Clase(models.Model):
     def __str__(self):
         return self.nombre
     
+    @property
+    def get_total_carrito(self):
+        items = self.itemspedido_set.all()
+        total = sum([item.get_total for item in items])
+        return total
+    
+    @property
+    def get_pedidos_carrito(self):
+        items = self.itemspedido_set.all()
+        pedidos = sum([item.cantidad for item in items])
+        return pedidos
+    
 
 class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True, related_name='pedidos')
