@@ -11,7 +11,7 @@ def tienda(request):
 def carrito(request):
     if request.user.is_authenticated:
         cliente = request.user.cliente
-        pedido, created = Pedido.objects.get_or_create(cliente=cliente, completado=False)
+        pedido, created = Order.objects.get_or_create(cliente=cliente, completado=False)
         items = pedido.itemspedido_set.all()
     else:
         items = []
@@ -20,18 +20,17 @@ def carrito(request):
     context = {'items':items, 'pedido':pedido}
     return render(request, 'tienda/carrito.html', context)
 
-def pedido(request):
-    context = {}
-    return render(request, 'tienda/pedido.html', context)
+def checkout(request):
+    if request.user.is_authenticated:
+        cliente = request.user.cliente
+        pedido, created = Order.objects.get_or_create(cliente=cliente, completado=False)
+        items = pedido.itemspedido_set.all()
+    else:
+        items = []
+        pedido = {'get_pedidos_carrito':0, 'get_total_carrito':0}
 
-def catalogo(request):
-    clases = Clase.objects.all()
-    return render(request, 'tienda/clase/catalogo.html', {'clases': clases})
-
-def clase_detalle(request, id):
-    clase = get_object_or_404(Clase, id=id)
-
-    return render(request, 'tienda/clase/detalle.html', {'clase': clase})
+    context = {'items':items, 'pedido':pedido}
+    return render(request, 'tienda/checkout.html', context)
 
 
 #Vistas respecto a  las clases
