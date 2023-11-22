@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'tienda.apps.TiendaConfig',
+    'shop.apps.ShopConfig',
     
 ]
 
@@ -109,6 +109,10 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR + '/media'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
