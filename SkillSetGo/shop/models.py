@@ -59,8 +59,8 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10,decimal_places=2)
     available = models.BooleanField(default=True)
-    init_dateTime = models.DateTimeField(auto_now=True)
-    finish_dateTime = models.DateTimeField(auto_now=True)
+    init_dateTime = models.DateTimeField()
+    finish_dateTime = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     class Meta:
