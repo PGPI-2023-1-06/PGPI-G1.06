@@ -4,6 +4,7 @@
 <head>
  <title>{% block title %}{% endblock %}</title>
  <link href="{% static "css/base.css" %}" rel="stylesheet">
+ 
 </head>
 <body>
  <div id="header">
@@ -26,7 +27,7 @@
  Hello {{ request.user.first_name|default:request.user.username }},
  <a href="{% url "logout" %}">Logout</a>
  {% else %}
- <a href="{% url "login" %}">Log-in</a>
+ 
  {% endif %}
  </span>
  </div>
