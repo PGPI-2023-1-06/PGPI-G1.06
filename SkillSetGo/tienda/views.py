@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 
 from .forms import ClaseForm
@@ -70,3 +71,6 @@ def eliminar_clase(request, id):
     clase = get_object_or_404(Clase, id=id)
     clase.delete()
     return redirect('listar_clases')
+
+def actualizar_item(request):
+    return JsonResponse('La clase se ha añadido', safe=False)

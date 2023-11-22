@@ -4,6 +4,10 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static "css/tienda.css" %}" rel="stylesheet">
+
+    <script type="text/javascript">
+        var user = '{{request.user}}'
+    </script>
 </head>
 <body>
     <div id="content">

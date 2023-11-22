@@ -16,6 +16,8 @@ urlpatterns = [
     path('clase/<int:id>/', views.detalle_clase, name='detalle_clase'),
     path('clase/crear/', views.crear_clase, name='crear_clase'),
     path('clase/editar/<int:id>/', views.editar_clase, name='editar_clase'),
-    path('clase/eliminar/<int:id>/', views.eliminar_clase, name='eliminar_clase')
+    path('clase/eliminar/<int:id>/', views.eliminar_clase, name='eliminar_clase'),
+
+    path('actualizar_item/', views.actualizar_item, name='actualizar_item')
 
 ]
