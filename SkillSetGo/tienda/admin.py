@@ -13,6 +13,6 @@ class PostAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Cliente)
-admin.site.register(Pedido)
-admin.site.register(ClaseEnPedido)
+admin.site.register(Order)
+admin.site.register(OrderItem)
 
