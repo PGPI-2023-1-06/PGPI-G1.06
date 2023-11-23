@@ -37,8 +37,11 @@ def product_detail(request, id, slug):
 
 
 @require_POST
-def product_comment(request, id):
-    product = get_object_or_404(Product, id=id, available=True)
+def product_comment(request, id,slug):
+    product = get_object_or_404(Product,
+    id=id,
+    slug=slug,
+    available=True)
     comment = None
     # A comment was posted
     form = CommentForm(data=request.POST)
