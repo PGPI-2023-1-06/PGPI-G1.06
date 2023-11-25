@@ -5,6 +5,27 @@
         <meta charset="utf-8" />
         <title>{% block title %}My shop{% endblock %}</title>
         <link href="{% static "css/base.css" %}" rel="stylesheet">
+        <script type="text/javascript">
+            var user = '{{request.user}}'
+
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i=0; i<cookies.length; i++) {
+                        var cookie = cookies[1].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(
+                                cookie.substring(name.length + 1)
+                            );
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            var csrftoken = getCookie('csrftoken');
+        </script>
     </head>
     <body>
         <div id="header">
@@ -19,5 +40,7 @@
         {% block content %}
         {% endblock %}
         </div>
+
+        <script type="text/javascript" src="{%static 'js.cart.js'%}"></script>
     </body>
 </html>
