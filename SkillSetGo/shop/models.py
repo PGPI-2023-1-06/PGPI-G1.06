@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Category(models.Model):
@@ -75,24 +76,37 @@ class Product(models.Model):
     
     def get_absolute_url(self):
         return reverse('shop:product_detail',args=[self.id, self.slug])
-    
 
-#Class order
+class Order(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
+    date_ordered = models.DateTimeField(auto_now_add=True)
+    completed = models.BooleanField(default=False) #to know if products can still be added to the order
 
-    @property
+    def __str__(self):
+        return str(self.id)
+
+    @property 
     def get_cart_total(self):
-        orderItems = self.orderitem_set.all()
-        return sum([item.get_total for item in orderItems])
+        orderitems = self.orderitem_set.all()
+        total = sum([item.get_total for item in orderitems])
+        return total
 
-    @property
-    def get_cart_item(self):
-        orderItems = self.orderitem_set.all()
-        return sum([item.quantity for item in orderItems])
+    @property 
+    def get_cart_items(self):
+        orderitems = self.orderitem_set.all()
+        total = sum([item.quantity for item in orderitems])
+        return total
 
-# Class order item
+class OrderItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, blank=True, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
+    quantity = models.IntegerField(default=0, null=True, blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.product.name)
 
     @property
     def get_total(self):
-        return self.product.price * self.quantity
-    
-    
+        total = self.product.price * self.quantity
+        return total

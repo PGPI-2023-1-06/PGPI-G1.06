@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render, get_object_or_404
-from .models import Category, Product, Professor, Subject
+from .models import Category, Product, Professor, Subject, Order, OrderItem
 from django.http import JsonResponse
 
 # Create your views here.
@@ -9,7 +9,6 @@ def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
     products = Product.objects.filter(available=True)
-    cartItems = order.get_cart_items
     if category_slug:
         category = get_object_or_404(Category,slug=category_slug)
         products = products.filter(category=category)
@@ -33,7 +32,7 @@ def product_detail(request, id, slug):
 def cart(request):
     if request.user.is_authenticated:
         customer = request.user
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        order, created = Order.objects.get_or_create(customer=customer, completed=False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
     else:
@@ -51,7 +50,7 @@ def updateItem(response):
 
     customer = response.user
     product = Product.objects.get(id=productId)
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    order, created = Order.objects.get_or_create(customer=customer, completed=False)
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
@@ -60,3 +59,15 @@ def updateItem(response):
 
     
     return JsonResponse('Item was added', safe=False)
+
+def checkout(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, completed=False)
+        items = order.orderitem_set.all()
+    else:
+        items = []
+        order = {'get_cart_total':0, 'get_cart_items':0}
+
+    context = {'items':items, 'order':order}
+    return render(request, 'shop/checkout.html', context)
