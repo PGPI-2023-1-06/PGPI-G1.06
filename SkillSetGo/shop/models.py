@@ -75,3 +75,24 @@ class Product(models.Model):
     
     def get_absolute_url(self):
         return reverse('shop:product_detail',args=[self.id, self.slug])
+    
+
+#Class order
+
+    @property
+    def get_cart_total(self):
+        orderItems = self.orderitem_set.all()
+        return sum([item.get_total for item in orderItems])
+
+    @property
+    def get_cart_item(self):
+        orderItems = self.orderitem_set.all()
+        return sum([item.quantity for item in orderItems])
+
+# Class order item
+
+    @property
+    def get_total(self):
+        return self.product.price * self.quantity
+    
+    
