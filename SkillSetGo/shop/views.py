@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Category, Product, Professor, Subject
+from .models import Category, Product, Professor, Subject, Order, OrderItem
 
 # Create your views here.
 
@@ -26,3 +26,15 @@ def product_detail(request, id, slug):
     return render(request,
     'shop/product/detail.html',
     {'product': product})
+
+def checkout(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, completed=False)
+        items = order.orderitem_set.all()
+    else:
+        items = []
+        order = {'get_cart_total':0, 'get_cart_items':0}
+
+    context = {'items':items, 'order':order}
+    return render(request, 'shop/checkout.html', context)
