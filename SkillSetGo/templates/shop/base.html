@@ -9,6 +9,29 @@
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <script type="text/javascript">
+        var user = '{{request.user}}'
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i=0; i<cookies.length; i++) {
+                    var cookie = cookies[1].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(
+                            cookie.substring(name.length + 1)
+                        );
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+    </script>
+
 </head>
 <body>
 
@@ -24,60 +47,21 @@
         
         
         <div class="ml-auto">
-            <a href="{% url 'login' %}">Log in</a>
-
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>{% block title %}My shop{% endblock %}</title>
-        <link href="{% static "css/base.css" %}" rel="stylesheet">
-        <script type="text/javascript">
-            var user = '{{request.user}}'
-
-            function getCookie(name) {
-                var cookieValue = null;
-                if (document.cookie && document.cookie != '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i=0; i<cookies.length; i++) {
-                        var cookie = cookies[1].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(
-                                cookie.substring(name.length + 1)
-                            );
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-            var csrftoken = getCookie('csrftoken');
-        </script>
-    </head>
-    <body>
-        <div id="header">
-            <a href="/" class="logo">My shop</a>
-
+            <a href="{% url 'login' %}">Log in</a></div>
+            <div class="cart ml-auto">
+                Your cart is empty.
+            </div>
+    
         </div>
-        
-        <div class="cart ml-auto">
-            Your cart is empty.
-        </div>
+    </nav>
 
-    </div>
-</nav>
-
-<div id="content" class="container mt-3">
-    {% block content %}
-    {% endblock %}
-</div>
-
+    
 <!-- Bootstrap JS and dependencies (jQuery, Popper.js) -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-</body>
-</html>
+
 
         <div id="content">
         {% block content %}
@@ -85,6 +69,7 @@
         </div>
 
         <script type="text/javascript" src="{%static 'js.cart.js'%}"></script>
-    </body>
-</html>
 
+
+</body>
+</html>
