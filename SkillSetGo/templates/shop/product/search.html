@@ -1,0 +1,16 @@
+{% if query %}
+    <div>
+        <div>
+        <!-- loop through search query -->
+        {% for product in products %}
+            <div>
+                <!-- return search query -->
+                <p>{{product.name}}</p>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <!-- return a message if the user does not enter a search query -->
+    <h1>Please enter a search query</h1>
+{% endif %}
