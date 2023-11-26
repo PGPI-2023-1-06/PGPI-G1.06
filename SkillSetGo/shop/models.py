@@ -77,6 +77,30 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('shop:product_detail',args=[self.id, self.slug])
 
+    
+
+class Comment(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='comments')
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['created']
+        indexes = [
+        models.Index(fields=['created']),
+        ]
+
+    def __str__(self):
+        return f'Comment by {self.name} on {self.product}'
+    
+    def get_absolute_url(self):
+        return reverse('shop:product_comment',args=[self.id, self.slug])
+
+
 class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     date_ordered = models.DateTimeField(auto_now_add=True)

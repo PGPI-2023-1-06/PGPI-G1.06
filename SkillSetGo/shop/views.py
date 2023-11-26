@@ -1,10 +1,9 @@
 import json
 from django.shortcuts import render, get_object_or_404
-
-from .models import Category, Product, Professor, Subject
 from django.db.models import Q  
-
-from .models import Category, Product, Professor, Subject, Order, OrderItem
+from django.views.decorators.http import require_POST
+from .forms import CommentForm
+from .models import Category, Product, Professor, Subject, Order, OrderItem ,Comment
 from django.http import JsonResponse
 
 
@@ -29,10 +28,41 @@ def product_detail(request, id, slug):
     id=id,
     slug=slug,
     available=True)
+    # List of active comments for this post
+    comments = product.comments.filter(active=True)
+    # Form for users to comment
+    form = CommentForm()
 
     return render(request,
     'shop/product/detail.html',
-    {'product': product})
+    {'product': product,
+    'comments': comments,
+    'form': form})
+
+
+@require_POST
+def product_comment(request, id,slug):
+    product = get_object_or_404(Product,
+    id=id,
+    slug=slug,
+    available=True)
+    comment = None
+    # A comment was posted
+    form = CommentForm(data=request.POST)
+    if form.is_valid():
+        # Create a Comment object without saving it to the database
+        comment = form.save(commit=False)
+        # Assign the product to the comment
+        comment.product = product
+        # Save the comment to the database
+        comment.save()
+    print("hola")
+    return render(request, 'shop/product/comment.html',
+        {'product': product,
+        'form': form,
+        'comment': comment})
+
+
 
 
 #Seach filter 
@@ -106,4 +136,5 @@ def checkout(request):
 
     context = {'items':items, 'order':order}
     return render(request, 'shop/checkout.html', context)
+
 
