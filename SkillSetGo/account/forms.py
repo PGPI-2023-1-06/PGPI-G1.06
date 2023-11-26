@@ -12,6 +12,11 @@ class UserRegistrationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'email']
+        help_texts = {
+            'username': None,
+            'password1': None,
+            'password2': None,
+        }
     def clean_password2(self):
         cd = self.cleaned_data
         if cd['password'] != cd['password2']:
