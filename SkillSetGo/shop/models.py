@@ -105,7 +105,7 @@ class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     date_ordered = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False) #to know if products can still be added to the order
-
+#aaa
     def __str__(self):
         return str(self.id)
 
