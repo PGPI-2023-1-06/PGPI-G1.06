@@ -25,26 +25,26 @@
             <br>
 
             <div class="box-element hidden" id="payment-info">
-                <small> Opciones de Pagamiento</small>
+                <small> Payment options</small>
             </div>
         </div>
 
         <div class="col-lg-6">
             <div class="box-element">
-                <a class="btn btn-outline-dark" href="{% url 'shop:cart' %}">&#x2190; Volver al carrito</a>
+                <a class="btn btn-outline-dark" href="{% url 'shop:cart' %}">&#x2190; Back to cart</a>
                 <hr>
-                <h3>Resumen del pedido</h3>
+                <h3>Order summary</h3>
                 <hr>
                 {% for item in items %}
                 <div class="cart-row">
                     <!-- check exact attribute names -->
-                    <div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
+                    <div style="flex:2"><img class="row-image" src="{{item.product.image.url}}"></div>
                     <div style="flex:2"><p>{{item.product.name}}</p></div>
                     <div style="flex:2"><p>€{{item.product.price|floatformat:2}}</p></div>
                     <div style="flex:2"><p>x{{item.quantity}}</p></div>
                 </div>
                 {% endfor %}
-                <h5>Productos: {{order.get_cart_items}}</h5>
+                <h5>Products: {{order.get_cart_items}}</h5>
                 <h5>Total: €{{order.get_cart_total|floatformat:2}}</h5>
             </div>
         </div>
