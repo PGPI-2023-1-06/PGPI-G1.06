@@ -22,4 +22,8 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('', views.dashboard, name='dashboard'),
 
+    #administration urls
+    path('administration/product/', views.product_form, name='product'),
+    path('administration/product/post', views.product_post, name='product_form'),
+
 ]

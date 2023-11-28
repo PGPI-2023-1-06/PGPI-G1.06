@@ -1,8 +1,13 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, UserRegistrationForm
-from django.contrib.auth.decorators import login_required
+
+
+from .forms import LoginForm, ProductForm, UserRegistrationForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.http import require_POST
+from django.http import HttpResponseBadRequest
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -27,6 +32,24 @@ def user_login(request):
 def dashboard(request):
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
+#Vistas para administrar
+@user_passes_test(lambda u: u.is_superuser)
+def product_form(request):
+    form = ProductForm()
+    return render(request, 'account/administration/product.html', {'form':form})
+
+@require_POST
+def product_post(request):
+    product = None
+    form = ProductForm(data=request.POST)
+    if form.is_valid():
+        product = form.save(commit=False)
+        product.save()
+    else:
+        return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
+    return render(request, 'account/dashboard.html',
+        {'product': product,
+        'form': form})
 
 def register(request):
     if request.method == 'POST':

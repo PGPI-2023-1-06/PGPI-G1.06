@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q  
 from django.views.decorators.http import require_POST
-from .forms import CommentForm
+from .forms import *
 from .models import Category, Product, Professor, Subject, Order, OrderItem ,Comment
 from django.http import JsonResponse
 
@@ -56,7 +56,6 @@ def product_comment(request, id,slug):
         comment.product = product
         # Save the comment to the database
         comment.save()
-    print("hola")
     return render(request, 'shop/product/comment.html',
         {'product': product,
         'form': form,
