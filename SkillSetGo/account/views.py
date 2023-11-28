@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
+
+from shop.models import Comment
 from .forms import LoginForm, UserRegistrationForm
 from django.contrib.auth.decorators import login_required
 
@@ -43,3 +45,21 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request,'account/register.html',{'user_form': user_form})
+
+
+#gestion de reclamaciones
+def reclamations_list(request):
+    reclamations = Comment.objects.filter(reclamation=True)
+
+        
+    return render(request,
+    'account/administration/reclamation.html',
+    {'reclamations': reclamations})
+
+#Cierre de reclamaciones
+def close_reclamation(request,id):
+    Comment.objects.filter(id=id).update(reclamation=False)
+        
+    return render(request,
+    'account/dashboard.html',
+    {'section': 'dashboard'})
