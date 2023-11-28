@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Product, Professor, Subject, Order, OrderItem ,Comment
+from .models import Category, Product, Professor, Subject, Customer, Order, OrderItem ,Comment
 
 
 @admin.register(Category)
@@ -31,6 +31,10 @@ class CommentAdmin(admin.ModelAdmin):
  list_display = ['name', 'email', 'product', 'created', 'active']
  list_filter = ['active', 'created', 'updated']
  search_fields = ['name', 'email', 'body']
+
+@admin.register(Customer)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email',]
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):

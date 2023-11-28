@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q  
 from django.views.decorators.http import require_POST
 from .forms import CommentForm
-from .models import Category, Product, Professor, Subject, Order, OrderItem ,Comment
+from .models import Category, Product, Professor, Subject, Customer, Order, OrderItem ,Comment
 from django.http import JsonResponse
 
 
@@ -16,12 +16,25 @@ def product_list(request, category_slug=None):
     if category_slug:
         category = get_object_or_404(Category,slug=category_slug)
         products = products.filter(category=category)
-        
+    
+    # necessary for the shopping cart digit
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total':0, 'get_cart_items':0}
+        cartItems = order['get_cart_items']
+
+    
     return render(request,
     'shop/product/list.html',
     {'category': category,
     'categories': categories,
-    'products': products})
+    'products': products, 
+    'cartItems': cartItems,})
 
 def product_detail(request, id, slug):
     product = get_object_or_404(Product,
@@ -33,11 +46,23 @@ def product_detail(request, id, slug):
     # Form for users to comment
     form = CommentForm()
 
+    # necessary for the shopping cart digit
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total':0, 'get_cart_items':0}
+        cartItems = order['get_cart_items']
+
     return render(request,
     'shop/product/detail.html',
     {'product': product,
     'comments': comments,
-    'form': form})
+    'form': form, 
+    'cartItems':cartItems})
 
 
 @require_POST
@@ -90,16 +115,28 @@ def index(request):
     if professor_query:
         products = products.filter(professor__name__icontains=professor_query)
 
+    # necessary for the shopping cart digit
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total':0, 'get_cart_items':0}
+        cartItems = order['get_cart_items']
+
     return render(request, 'shop/product/search_results.html', {
         'products': products,
         'search_query': search_query,
         'subject_query': subject_query,
         'professor_query': professor_query,
+        'cartItems':cartItems,
     })
 
 def cart(request):
     if request.user.is_authenticated:
-        customer = request.user
+        customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, completed=False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
@@ -111,21 +148,30 @@ def cart(request):
     context = {'items':items, 'order':order, 'cartItems':cartItems}
     return render(request, 'shop/cart.html', context)
 
-def updateItem(response):
-    data = json.loads(response.data)
-    productId = data['productId']
+def updateItem(request):
+    
+    data = json.loads(request.body)
+    
+    productId = data['productID']
     action = data['action']
 
-    customer = response.user
+    print('action:', action, 'id', productId)
+    customer = request.user.customer
     product = Product.objects.get(id=productId)
     order, created = Order.objects.get_or_create(customer=customer, completed=False)
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-    if action == 'remove':
+    if action == 'add':
+        orderItem.quantity = orderItem.quantity + 1
+    elif action == 'remove':
+        orderItem.quantity = orderItem.quantity - 1
+
+    orderItem.save()
+
+    if orderItem.quantity <= 0:
         orderItem.delete()
 
-    
     return JsonResponse('Item was added', safe=False)
 
 def checkout(request):
@@ -133,11 +179,13 @@ def checkout(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, completed=False)
         items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
     else:
         items = []
         order = {'get_cart_total':0, 'get_cart_items':0}
+        cartItems = order['get_cart_items']
 
-    context = {'items':items, 'order':order}
+    context = {'items':items, 'order':order, 'cartItems':cartItems}
     return render(request, 'shop/checkout.html', context)
 
 
