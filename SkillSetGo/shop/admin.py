@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Category, Product, Professor, Subject, Order, OrderItem
+
+from .models import Category, Product, Professor, Subject, Customer, Order, OrderItem ,Comment
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -24,6 +26,16 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ['price', 'available']
     prepopulated_fields = {'slug': ('name',)}
 
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+ list_display = ['name', 'email', 'product', 'created', 'active']
+ list_filter = ['active', 'created', 'updated']
+ search_fields = ['name', 'email', 'body']
+
+@admin.register(Customer)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email',]
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['customer', 'date_ordered', 'completed',]
@@ -31,3 +43,4 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ['product', 'order', 'quantity',]
+

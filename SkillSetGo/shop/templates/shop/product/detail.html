@@ -9,6 +9,7 @@
     <img src="{% if product.image %}{{ product.image.url }}{% else %}
     {% static "img/no_image.png" %}{% endif %}">
     <h1>{{ product.name }}</h1>
+    <h1>{{ product.subject}}</h1>
     <h1>{{ product.init_dateTime }}</h1>
     <h1>{{ product.finish_dateTime }}</h1>
     <h2>
@@ -17,6 +18,6 @@
         </a>
     </h2>
     <p class="price">${{ product.price }}</p>
-    {{ product.description|linebreaks }}
+    {{ product.description|linebreaks }}    
 </div>
 {% endblock %}

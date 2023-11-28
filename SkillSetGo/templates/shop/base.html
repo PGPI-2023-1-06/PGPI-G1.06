@@ -1,46 +1,89 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>{% block title %}My shop{% endblock %}</title>
-        <link href="{% static "css/base.css" %}" rel="stylesheet">
-        <script type="text/javascript">
-            var user = '{{request.user}}'
 
-            function getCookie(name) {
-                var cookieValue = null;
-                if (document.cookie && document.cookie != '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i=0; i<cookies.length; i++) {
-                        var cookie = cookies[1].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(
-                                cookie.substring(name.length + 1)
-                            );
-                            break;
-                        }
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}My shop{% endblock %}</title>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <script type="text/javascript">
+        var user = '{{request.user}}'
+
+        function getToken(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i=0; i<cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(
+                            cookie.substring(name.length + 1)
+                        );
+                        break;
                     }
                 }
-                return cookieValue;
             }
-            var csrftoken = getCookie('csrftoken');
-        </script>
-    </head>
-    <body>
-        <div id="header">
-            <a href="/" class="logo">My shop</a>
-        </div>
-        <div id="subheader">
-            <div class="cart">
-            Your cart is empty.
-            </div>
-        </div>
-        <div id="content">
-        {% block content %}
-        {% endblock %}
+            return cookieValue;
+        }
+        var csrftoken = getToken('csrftoken');
+
+    </script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/"><img src="https://i.imgur.com/vooWK6W.png" style="width: 120px; height: auto;">
+</a>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <form class="form-inline my-2 my-lg-0" method="POST" role="search" action="{% url 'shop:index' %}" >
+            {% csrf_token %}
+            <input class="form-control me-2 mr-sm-2" type="search" placeholder="Search for something" name="search_query" required aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        <div class="ml-auto">
+            
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Log out</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+                <a href="{% url 'dashboard' %}">My Profile</a> 
+            {% else %}
+            <a href="{% url 'login' %}">Log in</a>
+            {% endif %}
         </div>
 
-        <script type="text/javascript" src="{%static 'js.cart.js'%}"></script>
-    </body>
+        <div class="cart ml-auto">
+         <a href="{% url 'shop:cart' %}">
+                <img  id="cart-icon" src="{% static 'images/cart.png' %}">
+         </a>
+         <p id="cart-total">{{cartItems}}</p>
+        </div>
+    
+        </div>
+    </nav>
+
+    
+<!-- Bootstrap JS and dependencies (jQuery, Popper.js) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<div id="content">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
+
+
+
+
+
+
+</body>
 </html>
