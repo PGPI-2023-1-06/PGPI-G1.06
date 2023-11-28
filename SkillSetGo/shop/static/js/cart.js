@@ -2,15 +2,39 @@ var updateBtns = document.getElementsByClassName('update-cart')
 
 for(var i = 0; i < updateBtns.length; i++){
     updateBtns[i].addEventListener('click', function(){
-        var claseId = this.dataset.clase
+        var product = this.dataset.product
         var action = this.dataset.action
-        console.log('claseId:', claseId, 'Action:', action)
+        console.log('Productid:', product, 'Action:', action)
 
         console.log('USER:', user)
         if(user === 'AnonymousUser'){
-            console.log('No esta logeado')
+            console.log('User is not authenticazted')
         }else{
-            console.log('Esta logeado')
+            updateUserOrder(product, action)
         }
+    })
+}
+
+function updateUserOrder(productID, action){
+    console.log('User authenticated, sending data')
+
+    var url = '/update_item/'
+
+    fetch(url, {
+        method: 'POST', 
+        headers: {
+            'Content-Type':'application/json',
+            'X-CSRFToken':csrftoken,
+        },
+        body:JSON.stringify({'productID': productID,'action': action})
+    })
+
+    .then((response) => {
+        return response.json()
+    })
+
+    .then((data) =>{
+        console.log('data:', data)
+        location.reload()
     })
 }
