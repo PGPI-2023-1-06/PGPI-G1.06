@@ -1,1 +1,1 @@
-web: gunicorn SkillSetGo.wsgi
+web: python manage.py migrate && gunicorn {SkillSetGo}.wsgi
