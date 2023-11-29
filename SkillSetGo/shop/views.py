@@ -79,9 +79,12 @@ def product_comment(request, id,slug):
         comment = form.save(commit=False)
         # Assign the product to the comment
         comment.product = product
+        comment.name=request.user.username
+        comment.email=request.user.email
+        if comment.reclamation==True:
+            comment.active=False
         # Save the comment to the database
         comment.save()
-    print("hola")
     return render(request, 'shop/product/comment.html',
         {'product': product,
         'form': form,
