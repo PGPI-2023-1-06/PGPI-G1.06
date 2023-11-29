@@ -1,4 +1,7 @@
 {
+    "scripts": {
+        "railway:start:backend": "directus bootstrap --skipAdminInit; pnpm directus:schema:apply --yes; directus start"
+      },
     "$schema": "https://railway.app/railway.schema.json",
     "build": {
       "builder": "NIXPACKS",

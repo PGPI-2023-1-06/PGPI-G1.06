@@ -1,9 +1,0 @@
-{
-    "scripts": {
-      "railway:start:backend": "directus bootstrap --skipAdminInit; pnpm directus:schema:apply --yes; directus start"
-    },
-    "dependencies": {
-      "@directus/api": "^11.1.0",
-      "directus": "^10.6.1"
-    }
-  }
