@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 
-from shop.models import Comment
+from shop.models import Comment, Customer
 from .forms import LoginForm, UserRegistrationForm
 from django.contrib.auth.decorators import login_required
 
@@ -41,6 +41,9 @@ def register(request):
             user_form.cleaned_data['password'])
             # Save the User object
             new_user.save()
+            # Create a customer object to link orders to users
+            customer = Customer.objects.create(user=new_user, name=new_user.username, email=new_user.email)
+            customer.save()
             return render(request, 'account/register_done.html',{'new_user': new_user})
     else:
         user_form = UserRegistrationForm()
