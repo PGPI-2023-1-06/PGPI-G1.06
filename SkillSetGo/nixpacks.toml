@@ -4,4 +4,4 @@ providers = ['...', 'python']
 cmds = ['pnpm install --no-frozen-lockfile']
 
 [start]
-cmd = 'python manage.py migrate && gunicorn skillsetgo.wsgi'
+cmd = 'python manage.py migrate && gunicorn SkillSetGo.wsgi'
