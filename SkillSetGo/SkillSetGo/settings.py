@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-7r*)=f0=$8=bh!eo#dxv!$@_jo^%*mymb4%$68xv!n-!2(i)d%
 #DEBUG = True
 
 ALLOWED_HOSTS = ['.up.railway.app']
-CSRF_TRUSTED_ORIGINS=['.up.railway.app']
+CSRF_TRUSTED_ORIGINS=['https://pgpi-g106-production.up.railway.app']
 
 
 
