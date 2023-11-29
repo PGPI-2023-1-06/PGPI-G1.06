@@ -1,14 +1,13 @@
-
 from django.db import migrations, models
 import django.db.models.deletion
-
+from django.conf import settings
 
 class Migration(migrations.Migration):
 
     initial = True
 
     dependencies = [
-
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -26,7 +25,15 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-
+            name='Order',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('date_ordered', models.DateTimeField(auto_now_add=True)),
+                ('completed', models.BooleanField(default=False)),
+                ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='orders', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Subject',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -78,7 +85,16 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-
+            name='OrderItem',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('quantity', models.IntegerField(blank=True, default=0, null=True)),
+                ('date_added', models.DateTimeField(auto_now_add=True)),
+                ('order', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='shop.order')),
+                ('product', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='shop.product')),
+            ],
+        ),
+        migrations.CreateModel(
             name='Comment',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -88,7 +104,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('active', models.BooleanField(default=True)),
-
+                ('reclamation', models.BooleanField(default=False)),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='shop.product')),
             ],
             options={
