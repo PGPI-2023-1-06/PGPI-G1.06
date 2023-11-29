@@ -4,4 +4,4 @@ providers = ['...', 'python']
 cmds = ['pnpm install --no-frozen-lockfile']
 
 [start]
-cmd = 'pnpm railway:start:backend'
+cmd = 'python manage.py migrate && gunicorn skillsetgo.wsgi'
