@@ -1,5 +1,5 @@
 {
-    "railway":"start:backend",
+    
     "$schema": "https://railway.app/railway.schema.json",
     "build": {
       "builder": "NIXPACKS",
@@ -14,7 +14,7 @@
       "buildCommand": "pnpm i --frozen-lockfile --force && pnpm -F frontend build"
     },
     "deploy": {
-      "startCommand": "python manage.py migrate && python manage.py collectstatic --no-input && gunicorn skillsetgo.wsgi",
+      "startCommand": "python manage.py migrate && python manage.py collectstatic --no-input && gunicorn skillsetgo.wsgi && npm run railway:start:backend",
       "restartPolicyType": "ON_FAILURE",
       "restartPolicyMaxRetries": 10
     }
