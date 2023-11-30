@@ -13,16 +13,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
-import mimetypes;
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Static files (CSS, JavaScript, Images)
-
-# The URL to use when referring to static files (where they will be served from)
-STATIC_URL = 'static/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -33,14 +26,8 @@ SECRET_KEY = 'django-insecure-7r*)=f0=$8=bh!eo#dxv!$@_jo^%*mymb4%$68xv!n-!2(i)d%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.up.railway.app', '127.0.0.1', 'localhost']
-CSRF_TRUSTED_ORIGINS=['https://pgpi-g106-production.up.railway.app']
+ALLOWED_HOSTS = []
 
-mimetypes.add_type("text/css", ".css", True)
-
-
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT =os.path.join(BASE_DIR, 'staticfiles')
 
 # Application definition
 
@@ -64,11 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    
 ]
-
-
 
 ROOT_URLCONF = 'SkillSetGo.urls'
 
@@ -144,8 +127,9 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-
+STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
