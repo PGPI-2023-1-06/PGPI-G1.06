@@ -3,4 +3,8 @@
 {% block content %}
  <!--<h1>Dashboard</h1>-->
  <p>Welcome!</p>
+ {% if user.is_superuser %}
+    <p>¡Eres un superusuario!</p>
+    <a href = "/account/administration/reclamation">Reclamations</a>
+{% endif %}
 {% endblock %}
