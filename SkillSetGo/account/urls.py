@@ -22,8 +22,4 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('', views.dashboard, name='dashboard'),
 
-    #reclamations urls
-    path('administration/reclamation/', views.reclamations_list, name='reclamation'),
-    path('administration/reclamation/close/<int:id>', views.close_reclamation, name='reclamation_close'),
-
 ]

@@ -328,119 +328,6 @@ form div.field {
     color:#666;
     border-radius:4px;
 }
-
-
-/*parte para reclamations
-/* Reset de estilos básico para eliminar márgenes y rellenos predeterminados */
-body, h1, h2, p, button {
-    margin: 0;
-    padding: 0;
-}
-
-/* Estilo del contenedor principal */
-#main {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Estilo de la lista de reclamaciones */
-.reclamation-list {
-    font-family: Arial, sans-serif;
-}
-
-/* Estilo de cada elemento de reclamación */
-.item {
-    border: 1px solid #ccc;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f3f3f3;
-}
-
-/* Estilo de los encabezados */
-.item h2 {
-    color: #333;
-}
-
-/* Estilo del botón para cerrar la reclamación */
-button {
-    background-color: #9f7aea;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-button:hover {
-    background-color: rgb(255, 0, 0);
-}
-
-/* para product details 
-body, h1, h2, h3, p, a {
-    margin: 0;
-    padding: 0;
-}
-
-/* Estilo del contenedor principal */
-.product-detail {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f8f8f8; /* Gris claro */
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilo de la imagen del producto */
-.product-detail img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 20px;
-    border-radius: 8px;
-}
-
-/* Estilos de los encabezados */
-.product-detail h1,
-.product-detail h2,
-.product-detail h3 {
-    color: #333; /* Color de texto principal */
-}
-
-/* Estilo de los enlaces */
-.product-detail a {
-    color: #9f7aea; /* Tono morado */
-}
-
-.product-detail a:hover {
-    color: #724c9f; /* Tono morado más oscuro al pasar el mouse */
-}
-
-/* Estilo del precio */
-.product-detail .price {
-    font-size: 18px;
-    font-weight: bold;
-    color: #9f7aea; /* Tono morado */
-}
-
-/* Estilo de los comentarios */
-.comment {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #fff; /* Blanco */
-    border: 1px solid #eee; /* Gris claro */
-    border-radius: 4px;
-}
-
-/* Estilo del formulario de comentarios */
-.comment-form {
-    margin-top: 20px;
-}
-
 /* in a custom CSS file */
 .card {
     border: 1px solid #ddd;
@@ -457,7 +344,6 @@ body, h1, h2, h3, p, a {
 .card-body {
     padding: 1.25rem;
 }
-
 
 .box-element{
 	box-shadow:hsl(0, 0%, 80%) 0 0 16px;
@@ -550,4 +436,3 @@ body, h1, h2, h3, p, a {
 .hidden{
 	display: none!important;
 }
-
