@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Static files (CSS, JavaScript, Images)
 
 # The URL to use when referring to static files (where they will be served from)
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -36,7 +36,7 @@ SECRET_KEY = 'django-insecure-7r*)=f0=$8=bh!eo#dxv!$@_jo^%*mymb4%$68xv!n-!2(i)d%
 ALLOWED_HOSTS = ['.up.railway.app']
 CSRF_TRUSTED_ORIGINS=['https://pgpi-g106-production.up.railway.app']
 
-mimetypes.add_type("text/css", ".css" , True)
+mimetypes.add_type("text/css", ".css", True)
 
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
