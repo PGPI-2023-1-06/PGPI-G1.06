@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Reclamations
+{% endblock %}
+{% block content %}
+
+<div id="main" class="reclamation-list">
+    <h1>Reclamations</h1>
+    {% for reclamation in reclamations %}
+    <div class="item">
+        <h2>Name: {{ reclamation.name }}
+        </h2>
+        <h2>
+        Email: {{ reclamation.email }}
+        </h2>
+        Reclamation: {{ reclamation.body }}
+        <a href="close/{{ reclamation.id }}" >
+            <button>Close reclamation</button>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
