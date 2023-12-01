@@ -45,11 +45,10 @@ def product_post(request):
     if form.is_valid():
         product = form.save(commit=False)
         product.save()
-    else:
-        return HttpResponseBadRequest(form.errors)
-    return render(request, 'account/dashboard.html',
-        {'product': product,
-        'form': form})
+        return render(request, 'account/dashboard.html',
+            {'product': product,
+            'form': form})
+    return render(request, 'account/administration/product.html', {'form':form})
 
 #Vistas para administrar categorias
 @user_passes_test(lambda u: u.is_superuser)
