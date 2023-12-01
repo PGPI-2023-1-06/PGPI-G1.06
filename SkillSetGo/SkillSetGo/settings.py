@@ -26,7 +26,10 @@ SECRET_KEY = 'django-insecure-7r*)=f0=$8=bh!eo#dxv!$@_jo^%*mymb4%$68xv!n-!2(i)d%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.up.railway.app', '127.0.0.1', 'localhost']
+CSRF_TRUSTED_ORIGINS=['https://pgpi-g106-production.up.railway.app']
+
+mimetypes.add_type("text/css", ".css", True)
 
 
 # Application definition
