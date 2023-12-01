@@ -29,5 +29,7 @@ urlpatterns = [
     path('administration/category/post', views.category_post, name='category_form'),
     path('administration/subject/', views.subject_form, name='subject'),
     path('administration/subject/post', views.subject_post, name='subject_form'),
+    path('administration/professor/', views.professor_form, name='professor'),
+    path('administration/professor/post', views.professor_post, name='professor_form'),
 
 ]
