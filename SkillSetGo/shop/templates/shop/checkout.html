@@ -3,51 +3,64 @@
 {% block content %}
     <div class="row">
         <div class="col-lg-6">
-            <div class="box-element" id="form-wrapper">
-                <form id="form">
-                    <div id="user-info">
-                        <div class="form-field">
-                            <input required class="form-control" type="text" name="name" placeholder="Name..">
+            <form id="form" method="post" action="{% url 'shop:process_payment' %}">
+                {% csrf_token %}
+                <div class="box-element" id="form-wrapper">
+                        {% if request.user.is_authenticated %}
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input class="form-control" type="email" name="email" value="{{ request.user.email }}" required>
                         </div>
-                        <div class="form-field">
-                            <input required class="form-control" type="email" name="email" placeholder="Email..">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input class="form-control" type="text" name="name" value="{{ request.user.first_name }}" required>
                         </div>
-                    </div>
-                    <div id="shipping-info">
-
-                    </div>
-
-                    <hr>
-                    <input id="form-button" class="btn btn-success btn-block" type="submit" value="continue"></input>
-                </form>
-            </div>
-
-            <br>
-
-            <div class="box-element hidden" id="payment-info">
-                <small> Payment options</small>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="box-element">
-                <a class="btn btn-outline-dark" href="{% url 'shop:cart' %}">&#x2190; Back to cart</a>
-                <hr>
-                <h3>Order summary</h3>
-                <hr>
-                {% for item in items %}
-                <div class="cart-row">
-                    <!-- check exact attribute names -->
-                    <div style="flex:2"><img class="row-image" src="{{item.product.image.url}}"></div>
-                    <div style="flex:2"><p>{{item.product.name}}</p></div>
-                    <div style="flex:2"><p>€{{item.product.price|floatformat:2}}</p></div>
-                    <div style="flex:2"><p>x{{item.quantity}}</p></div>
+                    {% else %}
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input class="form-control" type="text" name="name">
+                        </div>
+                    {% endif %}
                 </div>
-                {% endfor %}
-                <h5>Products: {{order.get_cart_items}}</h5>
-                <h5>Total: €{{order.get_cart_total|floatformat:2}}</h5>
+
+                <br>
+                <div class="form-group">
+                    <label for="payment_method">Payment options:</label>
+                    <select class="form-control" name="payment_method" id="payment_method">
+                        {% if order.is_in_person %}
+                        <option value="Cash">Cash on Delivery</option>
+                        {% endif %}
+                        <option value="Stripe">Pay with Stripe</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Continue to payment</button>
+            
             </div>
-        </div>
+
+            <div class="col-lg-6">
+                <div class="box-element">
+                    <a class="btn btn-outline-dark" href="{% url 'shop:cart' %}">&#x2190; Back to cart</a>
+                    <hr>
+                    <h3>Order summary</h3>
+                    <hr>
+                    {% for item in items %}
+                    <div class="cart-row">
+                        <!-- check exact attribute names -->
+                        <div style="flex:2"><img class="row-image" src="{{item.product.image.url}}"></div>
+                        <div style="flex:2"><p>{{item.product.name}}</p></div>
+                        <div style="flex:2"><p>€{{item.product.price|floatformat:2}}</p></div>
+                        <div style="flex:2"><p>x{{item.quantity}}</p></div>
+                    </div>
+                    {% endfor %}
+                    <h5>Products: {{order.get_cart_items}}</h5>
+                    <h5>Total: €{{order.get_cart_total|floatformat:2}}</h5>
+                </div>
+            </div>
+        </form>
     </div>
 
 {% endblock content %}

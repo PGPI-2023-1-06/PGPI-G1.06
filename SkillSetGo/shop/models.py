@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
 
 # Create your models here.
 class Category(models.Model):
@@ -110,10 +111,19 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
+def get_code():
+        code = get_random_string(length=8)
+        return code
+
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     date_ordered = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False) #to know if products can still be added to the order
+    code = models.CharField(
+        max_length = 10,
+        blank=True,
+        editable=False,
+        default=get_code)
 #aaa
     def __str__(self):
         return str(self.id)
@@ -130,6 +140,15 @@ class Order(models.Model):
         total = sum([item.quantity for item in orderitems])
         return total
 
+    @property
+    def is_in_person(self):
+        orderitems = self.orderitem_set.all()
+        cat = None
+        for item in orderitems:
+            if item.product.category.name == 'Fisico':
+                cat = True
+        return cat
+
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
@@ -143,3 +162,4 @@ class OrderItem(models.Model):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+
