@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from shop.models import Product, Category
+from shop.models import Product, Category, Subject
 
 class LoginForm(forms.Form):
  username = forms.CharField()
@@ -49,4 +49,9 @@ class ProductForm(forms.ModelForm):
 class CategoryForm(forms.ModelForm):
     class Meta:
         model=Category
+        fields = ['name','slug']
+
+class SubjetcForm(forms.ModelForm):
+    class Meta:
+        model=Subject
         fields = ['name','slug']

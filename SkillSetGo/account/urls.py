@@ -27,5 +27,7 @@ urlpatterns = [
     path('administration/product/post', views.product_post, name='product_form'),
     path('administration/category/', views.category_form, name='category'),
     path('administration/category/post', views.category_post, name='category_form'),
+    path('administration/subject/', views.subject_form, name='subject'),
+    path('administration/subject/post', views.subject_post, name='subject_form'),
 
 ]

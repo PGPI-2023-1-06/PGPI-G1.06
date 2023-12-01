@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 
 
-from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm
+from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
@@ -68,6 +68,25 @@ def category_post(request):
         return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
     return render(request, 'account/dashboard.html',
         {'category': category,
+        'form': form})
+
+#Vistas para administrar asignaturas
+@user_passes_test(lambda u: u.is_superuser)
+def subject_form(request):
+    form = SubjetcForm()
+    return render(request, 'account/administration/subject.html', {'form':form})
+
+@require_POST
+def subject_post(request):
+    subject = None
+    form = SubjetcForm(data=request.POST)
+    if form.is_valid():
+        subject = form.save(commit=False)
+        subject.save()
+    else:
+        return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
+    return render(request, 'account/dashboard.html',
+        {'subject': subject,
         'form': form})
 
 def register(request):
