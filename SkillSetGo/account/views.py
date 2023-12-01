@@ -46,7 +46,7 @@ def product_post(request):
         product = form.save(commit=False)
         product.save()
     else:
-        return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
+        return HttpResponseBadRequest(form.errors)
     return render(request, 'account/dashboard.html',
         {'product': product,
         'form': form})

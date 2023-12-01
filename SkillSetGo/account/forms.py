@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from shop.models import Product, Category, Subject, Professor
+from django.core.exceptions import ValidationError
+import datetime
 
 class LoginForm(forms.Form):
  username = forms.CharField()
@@ -29,13 +31,37 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ['category', 'professor', 'subject', 'name', 'slug', 'image', 'description', 'price', 'init_dateTime', 'finish_dateTime']
 
+        '''
         input_formats = ['%Y-%m-%d %H:%M:%S']
 
         widgets = {
             'init_dateTime': forms.DateTimeInput(format='%Y-%m-%d %H:%M:%S',attrs={'class': 'datetime-input'}),
             'finish_dateTime': forms.DateTimeInput(format='%Y-%m-%d %H:%M:%S',attrs={'class': 'datetime-input'}),
         }
+        '''
+    
+    def clean_init_dateTime(self):
+        init_dateTime = self.cleaned_data['init_dateTime']
+        expected_format = '%Y-%m-%d %H:%M:%S'
 
+        try:
+            init_dateTime = datetime.datetime.strptime(init_dateTime, expected_format)
+        except ValueError:
+            raise ValidationError(f'Incorrect format. Initial date should be in {expected_format} format.')
+
+        return init_dateTime
+
+    def clean_finish_dateTime(self):
+        finish_dateTime = self.cleaned_data['finish_dateTime']
+        expected_format = '%Y-%m-%d %H:%M:%S'
+
+        try:
+            finish_dateTime = datetime.datetime.strptime(finish_dateTime, expected_format)
+        except ValueError:
+            raise ValidationError(f'Incorrect format. Finish date should be in {expected_format} format.')
+
+        return finish_dateTime
+'''
     def clean(self):
         cleaned_data = super().clean()
         init_dateTime = cleaned_data.get("init_dateTime")
@@ -45,7 +71,7 @@ class ProductForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de inicio debe ser anterior a la fecha de finalización.")
 
         return cleaned_data
-    
+    '''
 class CategoryForm(forms.ModelForm):
     class Meta:
         model=Category
