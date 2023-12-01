@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from shop.models import Product
+from shop.models import Product, Category
 
 class LoginForm(forms.Form):
  username = forms.CharField()
@@ -45,3 +45,8 @@ class ProductForm(forms.ModelForm):
             raise forms.ValidationError("La fecha de inicio debe ser anterior a la fecha de finalización.")
 
         return cleaned_data
+    
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model=Category
+        fields = ['name','slug']

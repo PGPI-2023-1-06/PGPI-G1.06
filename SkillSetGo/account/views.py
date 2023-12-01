@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 
 
-from .forms import LoginForm, ProductForm, UserRegistrationForm
+from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
@@ -32,7 +32,7 @@ def user_login(request):
 def dashboard(request):
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
-#Vistas para administrar
+#Vistas para administrar productos
 @user_passes_test(lambda u: u.is_superuser)
 def product_form(request):
     form = ProductForm()
@@ -49,6 +49,25 @@ def product_post(request):
         return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
     return render(request, 'account/dashboard.html',
         {'product': product,
+        'form': form})
+
+#Vistas para administrar categorias
+@user_passes_test(lambda u: u.is_superuser)
+def category_form(request):
+    form = CategoryForm()
+    return render(request, 'account/administration/category.html', {'form':form})
+
+@require_POST
+def category_post(request):
+    category = None
+    form = CategoryForm(data=request.POST)
+    if form.is_valid():
+        category = form.save(commit=False)
+        category.save()
+    else:
+        return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
+    return render(request, 'account/dashboard.html',
+        {'category': category,
         'form': form})
 
 def register(request):
