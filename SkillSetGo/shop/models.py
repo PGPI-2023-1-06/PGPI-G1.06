@@ -65,6 +65,7 @@ class Product(models.Model):
     finish_dateTime = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    quota =  models.IntegerField(default=20)
     class Meta:
         ordering = ['name']
         indexes = [
