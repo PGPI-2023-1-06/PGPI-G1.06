@@ -5,6 +5,12 @@ from django.views.decorators.http import require_POST
 from .forms import CommentForm
 from .models import Category, Product, Professor, Subject, Customer, Order, OrderItem ,Comment
 from django.http import JsonResponse
+from django.urls import reverse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 # Create your views here.
@@ -209,5 +215,52 @@ def checkout(request):
         context = {'items':items, 'order':order, 'cartItems':cartItems}
         return render(request, 'shop/checkout.html', context)
     return render(request, 'shop/checkout.html')
+    
+def enviar_correo(name, total, items, payment_method, order_id, email, code):
+    subject = 'Your SkillSetGo Order Details'
+    from_email = 'skillsetgo4@gmail.com'
+    to_email = [email]
+    order = get_object_or_404(Order, pk=order_id)
+
+    context = {
+        'name': name,
+        'total': total,
+        'items': items,
+        'payment_method': payment_method,
+        'order': order,
+        'code': code,
+        }
+
+    html_message = render_to_string('payment/completed.html', context)
+    plain_message = strip_tags(html_message)
+
+    send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
+
+def process_payment(request):
+    if request.method == 'POST':
+        # Retrieve form data
+        customer = request.user.customer
+        order = get_object_or_404(Order, customer=customer, completed=False)
+        items = order.orderitem_set.all()
+        total = order.get_cart_total
+        order_id = order.id
+        code = order.code
+        email = request.POST.get('email')
+        name = request.POST.get('name')
+        payment_method = request.POST.get('payment_method')
+
+        # Process the payment method
+        if payment_method == 'Cash':
+            # Handle Cash payment logic
+            context = {'items':items, 'order':order}
+            enviar_correo(name, total, items, payment_method, order_id, email, code)
+            return redirect(f'/payment/completed/{order.id}/')
+        elif payment_method == 'Stripe':
+            # Handle Stripe payment logic
+            enviar_correo(name, total, items, payment_method, order_id, email, code)
+            return redirect(f'/payment/process/{order.id}/')
+        else:
+            messages.error(request, 'Invalid payment method selected.')
+        
 
 
