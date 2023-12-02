@@ -7,7 +7,7 @@
 <div class="product-detail">
     <img src="{% if product.image %}{{ product.image.url }}{% else %}
     {% static "img/no_image.png" %}{% endif %}">
-    <h1>Name: {{ product.name }}</h1>
+    <h1> {{ product.name }}</h1>
     <h2>Init date: {{ product.init_dateTime }}</h2>
     <h2>Finish date: {{ product.finish_dateTime }}</h2>
     <h2>

@@ -211,3 +211,5 @@ def checkout(request):
     return render(request, 'shop/checkout.html')
 
 
+def aboutUs(request):
+    return render(request, 'shop/aboutUs.html')
