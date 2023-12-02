@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login
 from shop.models import Comment, Customer, Order
 from .forms import LoginForm, UserRegistrationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 def user_login(request):
     if request.method == 'POST':
@@ -79,3 +80,8 @@ def close_reclamation(request,id):
     return render(request,
     'account/dashboard.html',
     {'section': 'dashboard'})
+
+#Gestion de ventas
+def sales_management(request):
+    users = User.objects.all()
+    return render(request, 'account/administration/sales_management.html', {'users': users})
