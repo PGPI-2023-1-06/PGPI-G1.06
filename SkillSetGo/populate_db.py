@@ -72,6 +72,7 @@ def populate_products():
             'available': random.choice([True, False]),
             'init_dateTime': fake.date_time_this_year(),
             'finish_dateTime': fake.date_time_this_year() + timedelta(days=random.randint(7, 30)),
+            'quota': random.randint(1,30),
         },
         {
             'category': random.choice(categories),
@@ -85,6 +86,7 @@ def populate_products():
             'available': random.choice([True, False]),
             'init_dateTime': fake.date_time_this_year(),
             'finish_dateTime': fake.date_time_this_year() + timedelta(days=random.randint(7, 30)),
+            'quota': random.randint(1,30),
         },
         {
             'category': random.choice(categories),
@@ -98,6 +100,7 @@ def populate_products():
             'available': random.choice([True, False]),
             'init_dateTime': fake.date_time_this_year(),
             'finish_dateTime': fake.date_time_this_year() + timedelta(days=random.randint(7, 30)),
+            'quota': random.randint(1,30),
         },
         {
             'category': random.choice(categories),
@@ -111,6 +114,7 @@ def populate_products():
             'available': random.choice([True, False]),
             'init_dateTime': fake.date_time_this_year(),
             'finish_dateTime': fake.date_time_this_year() + timedelta(days=random.randint(7, 30)),
+            'quota': random.randint(1,30),
         },
         {
             'category': random.choice(categories),
@@ -124,6 +128,7 @@ def populate_products():
             'available': random.choice([True, False]),
             'init_dateTime': fake.date_time_this_year(),
             'finish_dateTime': fake.date_time_this_year() + timedelta(days=random.randint(7, 30)),
+            'quota': random.randint(1,30),
         },
         # Add more products as needed
     ]
