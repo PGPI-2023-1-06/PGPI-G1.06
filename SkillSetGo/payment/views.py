@@ -76,6 +76,11 @@ def payment_completed(request, order_id):
     total = order.get_cart_total
     email = request.session['email'] 
     enviar_correo(total, items, order_id, email, code)
+    # Decrement product quota for each item in the order
+    for item in items:
+        product = item.product
+        product.quota -= 1
+        product.save()
     return render(request, 'payment/completed.html', {'order': order,
         'items': items, 'code': code})
 

@@ -2,11 +2,12 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q  
 from django.views.decorators.http import require_POST
-from .forms import CommentForm
+from .forms import *
 from .models import Category, Product, Professor, Subject, Customer, Order, OrderItem ,Comment
 from django.http import JsonResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 
@@ -80,7 +81,7 @@ def product_detail(request, id, slug):
         'comments': comments,
         'form': form})
 
-
+@login_required
 @require_POST
 def product_comment(request, id,slug):
     product = get_object_or_404(Product,
@@ -88,6 +89,7 @@ def product_comment(request, id,slug):
     slug=slug,
     available=True)
     comment = None
+    comments = product.comments.filter(active=True)
     # A comment was posted
     form = CommentForm(data=request.POST)
     if form.is_valid():
@@ -101,9 +103,11 @@ def product_comment(request, id,slug):
             comment.active=False
         # Save the comment to the database
         comment.save()
-    return render(request, 'shop/product/comment.html',
+        form = CommentForm()
+    return render(request, 'shop/product/detail.html',
         {'product': product,
         'form': form,
+        'comments': comments,
         'comment': comment})
 
 
@@ -186,9 +190,14 @@ def updateItem(request):
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-    if action == 'add':
-        orderItem.quantity = orderItem.quantity + 1
-    elif action == 'remove':
+    if product.quota <= 0:
+        messages.error(request, 'La clase ya esta completa.')
+    else:
+        if action == 'add' and orderItem.quantity < 1:
+            orderItem.quantity = orderItem.quantity + 1
+        elif action == 'add' and orderItem.quantity == 1:
+            messages.error(request, 'Solo puedes reservar la misma clase una vez.')
+    if action == 'remove':
         orderItem.quantity = orderItem.quantity - 1
 
     orderItem.save()
@@ -209,6 +218,11 @@ def checkout(request):
             items = []
             order = {'get_cart_total':0, 'get_cart_items':0}
             cartItems = order['get_cart_items']
+        for item in items:
+            product = item.product
+            if product.quota <= 0:
+                messages.error(request, 'La clase ya esta completa.')
+                return redirect('shop:cart')
 
         context = {'items':items, 'order':order, 'cartItems':cartItems}
         return render(request, 'shop/checkout.html', context)
@@ -246,6 +260,7 @@ def process_payment(request):
             return redirect(f'/payment/process/{order.id}/', context)
         else:
             messages.error(request, 'Invalid payment method selected.')
+        
         
 
 
