@@ -144,10 +144,10 @@ class Order(models.Model):
     @property
     def is_in_person(self):
         orderitems = self.orderitem_set.all()
-        cat = None
+        cat = True
         for item in orderitems:
-            if item.product.category.name == 'Fisico':
-                cat = True
+            if item.product.category.name == 'Online':
+                cat = False
         return cat
 
 class OrderItem(models.Model):
