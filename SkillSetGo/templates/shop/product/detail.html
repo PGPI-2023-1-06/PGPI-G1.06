@@ -4,6 +4,13 @@
 {{ product.name }}
 {% endblock %}
 {% block content %}
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
 <div class="product-detail">
     <img src="{% if product.image %}{{ product.image.url }}{% else %}
     {% static "img/no_image.png" %}{% endif %}">
@@ -18,12 +25,15 @@
     </h2>
     <h2>
     Professor: {{ product.professor }}
-    </h2>
-    <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
-    <h2>
     Subjetc: {{ product.subject}}
     </h2>
     <p class="price">Price: ${{ product.price }}</p>
+    {% if product.quota > 0 %}
+        <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Añadir al carrito</button>
+        {% else %}
+            <button class="btn btn-danger" disabled>Clase agotada</button>
+    {% endif %}
+    <p class="quota">Plazas disponibles: {{ product.quota }}</p>
     <h3>description:</h3> {{ product.description|linebreaks }}
 
     {% with comments.count as total_comments %}
@@ -43,6 +53,8 @@
     {% empty %}
     <p>There are no comments.</p>
     {% endfor %}
-    {% include "shop/product/includes/comment_form.html" %}
+    {% if user.is_authenticated %}
+        {% include "shop/product/includes/comment_form.html" %}
+    {% endif%}
 </div>
 {% endblock %}

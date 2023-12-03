@@ -2,11 +2,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
-
-from shop.models import Comment, Customer, Order
-from .forms import LoginForm, UserRegistrationForm
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm, ProfessorForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.http import require_POST
+from django.http import HttpResponseBadRequest
+from shop.models import Comment, Customer, Order
+
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -44,6 +47,80 @@ def dashboard(request):
         return render(request, 'account/dashboard.html', {'section': 'dashboard', 'cartItems': cartItems})
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
+#Vistas para administrar productos
+@user_passes_test(lambda u: u.is_superuser)
+def product_form(request):
+    form = ProductForm()
+    return render(request, 'account/administration/product.html', {'form':form})
+
+@require_POST
+def product_post(request):
+    product = None
+    form = ProductForm(data=request.POST)
+    if form.is_valid():
+        product = form.save(commit=False)
+        product.save()
+        return render(request, 'account/dashboard.html',
+            {'product': product,
+            'form': form})
+    return render(request, 'account/administration/product.html', {'form':form})
+
+#Vistas para administrar categorias
+@user_passes_test(lambda u: u.is_superuser)
+def category_form(request):
+    form = CategoryForm()
+    return render(request, 'account/administration/category.html', {'form':form})
+
+@require_POST
+def category_post(request):
+    category = None
+    form = CategoryForm(data=request.POST)
+    if form.is_valid():
+        category = form.save(commit=False)
+        category.save()
+    else:
+        return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
+    return render(request, 'account/dashboard.html',
+        {'category': category,
+        'form': form})
+
+#Vistas para administrar asignaturas
+@user_passes_test(lambda u: u.is_superuser)
+def subject_form(request):
+    form = SubjetcForm()
+    return render(request, 'account/administration/subject.html', {'form':form})
+
+@require_POST
+def subject_post(request):
+    subject = None
+    form = SubjetcForm(data=request.POST)
+    if form.is_valid():
+        subject = form.save(commit=False)
+        subject.save()
+    else:
+        return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
+    return render(request, 'account/dashboard.html',
+        {'subject': subject,
+        'form': form})
+
+#Vistas para administrar profesores
+@user_passes_test(lambda u: u.is_superuser)
+def professor_form(request):
+    form = ProfessorForm()
+    return render(request, 'account/administration/professor.html', {'form':form})
+
+@require_POST
+def professor_post(request):
+    professor = None
+    form = ProfessorForm(data=request.POST)
+    if form.is_valid():
+        professor = form.save(commit=False)
+        professor.save()
+    else:
+        return HttpResponseBadRequest("Error en el formulario. Por favor, corrige los errores.")
+    return render(request, 'account/dashboard.html',
+        {'professor': professor,
+        'form': form})
 
 def register(request):
     if request.method == 'POST':

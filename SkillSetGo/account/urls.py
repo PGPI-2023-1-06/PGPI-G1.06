@@ -22,6 +22,15 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('', views.dashboard, name='dashboard'),
 
+    #administration urls
+    path('administration/product/', views.product_form, name='product'),
+    path('administration/product/post', views.product_post, name='product_form'),
+    path('administration/category/', views.category_form, name='category'),
+    path('administration/category/post', views.category_post, name='category_form'),
+    path('administration/subject/', views.subject_form, name='subject'),
+    path('administration/subject/post', views.subject_post, name='subject_form'),
+    path('administration/professor/', views.professor_form, name='professor'),
+    path('administration/professor/post', views.professor_post, name='professor_form'),
     #reclamations urls
     path('administration/reclamation/', views.reclamations_list, name='reclamation'),
     path('administration/reclamation/close/<int:id>', views.close_reclamation, name='reclamation_close'),

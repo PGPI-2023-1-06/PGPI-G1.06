@@ -2,9 +2,14 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q  
 from django.views.decorators.http import require_POST
-from .forms import CommentForm
+from .forms import *
 from .models import Category, Product, Professor, Subject, Customer, Order, OrderItem ,Comment
 from django.http import JsonResponse
+from django.urls import reverse
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 
 
 # Create your views here.
@@ -76,7 +81,7 @@ def product_detail(request, id, slug):
         'comments': comments,
         'form': form})
 
-
+@login_required
 @require_POST
 def product_comment(request, id,slug):
     product = get_object_or_404(Product,
@@ -84,6 +89,7 @@ def product_comment(request, id,slug):
     slug=slug,
     available=True)
     comment = None
+    comments = product.comments.filter(active=True)
     # A comment was posted
     form = CommentForm(data=request.POST)
     if form.is_valid():
@@ -97,9 +103,11 @@ def product_comment(request, id,slug):
             comment.active=False
         # Save the comment to the database
         comment.save()
-    return render(request, 'shop/product/comment.html',
+        form = CommentForm()
+    return render(request, 'shop/product/detail.html',
         {'product': product,
         'form': form,
+        'comments': comments,
         'comment': comment})
 
 
@@ -182,9 +190,21 @@ def updateItem(request):
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-    if action == 'add':
-        orderItem.quantity = orderItem.quantity + 1
-    elif action == 'remove':
+    if product.quota <= 0:
+        messages.error(request, 'La clase ya esta completa.')
+    else:
+        orders = Order.objects.filter(customer=customer, completed=True)
+        has_bought_product = any(order.orderitem_set.filter(product=product).exists() for order in orders)
+        if has_bought_product:
+            messages.error(request, 'Este artículo ya ha sido comprado.')
+        elif action == 'add' and has_bought_product == False:
+            if orderItem.quantity < 1:
+                orderItem.quantity += 1
+            elif orderItem.quantity == 1:
+                messages.error(request, 'Solo puedes reservar la misma clase una vez.')
+        
+
+    if action == 'remove':
         orderItem.quantity = orderItem.quantity - 1
 
     orderItem.save()
@@ -205,9 +225,49 @@ def checkout(request):
             items = []
             order = {'get_cart_total':0, 'get_cart_items':0}
             cartItems = order['get_cart_items']
+        for item in items:
+            product = item.product
+            if product.quota <= 0:
+                messages.error(request, 'La clase ya esta completa.')
+                return redirect('shop:cart')
 
         context = {'items':items, 'order':order, 'cartItems':cartItems}
         return render(request, 'shop/checkout.html', context)
     return render(request, 'shop/checkout.html')
+
+def process_payment(request):
+    if request.method == 'POST':
+        # Retrieve form data
+        customer = request.user.customer
+        order = get_object_or_404(Order, customer=customer, completed=False)
+        items = order.orderitem_set.all()
+        total = order.get_cart_total
+        order_id = order.id
+        code = order.code
+        email = request.POST.get('email')
+        name = request.POST.get('name')
+        payment_method = request.POST.get('payment_method')
+        request.session['email'] = email
+        context = {
+        'name': name,
+        'total': total,
+        'items': items,
+        'payment_method': payment_method,
+        'order_id': order_id,
+        'email': email,
+        'code': code
+        }
+
+        # Process the payment method
+        if payment_method == 'Cash':
+            # Handle Cash payment logic
+            return redirect(f'/payment/completed/{order.id}/', context)
+        elif payment_method == 'Stripe':
+            # Handle Stripe payment logic
+            return redirect(f'/payment/process/{order.id}/', context)
+        else:
+            messages.error(request, 'Invalid payment method selected.')
+        
+        
 
 
