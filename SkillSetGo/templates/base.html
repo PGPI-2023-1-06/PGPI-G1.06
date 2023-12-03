@@ -9,7 +9,7 @@
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}"  type="text/css" rel="stylesheet">
     <script type="text/javascript">
         var user = '{{request.user}}'
 
@@ -54,7 +54,7 @@
 
             <div class="cart ml-auto">
                 <a href="{% url 'shop:cart' %}">
-                       <img  id="cart-icon" src="{% static 'images/cart.png' %}">
+                       <img  id="cart-icon" src="{% static 'images/cart.png' %}" width="32px" height="32px">
                 </a>
                 <p id="cart-total">{{cartItems}}</p>
             </div>

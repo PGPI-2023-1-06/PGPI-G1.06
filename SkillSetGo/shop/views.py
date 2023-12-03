@@ -24,23 +24,29 @@ def product_list(request, category_slug=None):
         products = products.filter(category=category)
     
     # necessary for the shopping cart digit
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, completed=False)
-        items = order.orderitem_set.all()
-        cartItems = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total':0, 'get_cart_items':0}
-        cartItems = order['get_cart_items']
+    if not request.user.is_superuser:
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, completed=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+        else:
+            items = []
+            order = {'get_cart_total':0, 'get_cart_items':0}
+            cartItems = order['get_cart_items']
 
-    
+        
+        return render(request,
+        'shop/product/list.html',
+        {'category': category,
+        'categories': categories,
+        'products': products, 
+        'cartItems': cartItems,})
     return render(request,
-    'shop/product/list.html',
-    {'category': category,
-    'categories': categories,
-    'products': products, 
-    'cartItems': cartItems,})
+        'shop/product/list.html',
+        {'category': category,
+        'categories': categories,
+        'products': products})
 
 def product_detail(request, id, slug):
     product = get_object_or_404(Product,
@@ -53,22 +59,28 @@ def product_detail(request, id, slug):
     form = CommentForm()
 
     # necessary for the shopping cart digit
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, completed=False)
-        items = order.orderitem_set.all()
-        cartItems = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total':0, 'get_cart_items':0}
-        cartItems = order['get_cart_items']
+    if not request.user.is_superuser:
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, completed=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+        else:
+            items = []
+            order = {'get_cart_total':0, 'get_cart_items':0}
+            cartItems = order['get_cart_items']
 
+        return render(request,
+        'shop/product/detail.html',
+        {'product': product,
+        'comments': comments,
+        'form': form, 
+        'cartItems':cartItems})
     return render(request,
-    'shop/product/detail.html',
-    {'product': product,
-    'comments': comments,
-    'form': form, 
-    'cartItems':cartItems})
+        'shop/product/detail.html',
+        {'product': product,
+        'comments': comments,
+        'form': form})
 
 
 @require_POST
@@ -122,38 +134,46 @@ def index(request):
         products = products.filter(professor__name__icontains=professor_query)
 
     # necessary for the shopping cart digit
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, completed=False)
-        items = order.orderitem_set.all()
-        cartItems = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total':0, 'get_cart_items':0}
-        cartItems = order['get_cart_items']
+    if not request.user.is_superuser:
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, completed=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+        else:
+            items = []
+            order = {'get_cart_total':0, 'get_cart_items':0}
+            cartItems = order['get_cart_items']
 
+        return render(request, 'shop/product/search_results.html', {
+            'products': products,
+            'search_query': search_query,
+            'subject_query': subject_query,
+            'professor_query': professor_query,
+            'cartItems':cartItems,
+        })
+    
     return render(request, 'shop/product/search_results.html', {
-        'products': products,
-        'search_query': search_query,
-        'subject_query': subject_query,
-        'professor_query': professor_query,
-        'cartItems':cartItems,
-    })
+            'products': products,
+            'search_query': search_query,
+            'subject_query': subject_query,
+            'professor_query': professor_query })
 
 def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, completed=False)
-        items = order.orderitem_set.all()
-        cartItems = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total':0, 'get_cart_items':0}
-        cartItems = order['get_cart_items']
+    if not request.user.is_superuser:
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, completed=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+        else:
+            items = []
+            order = {'get_cart_total':0, 'get_cart_items':0}
+            cartItems = order['get_cart_items']
 
-    context = {'items':items, 'order':order, 'cartItems':cartItems}
-    return render(request, 'shop/cart.html', context)
-
+        context = {'items':items, 'order':order, 'cartItems':cartItems}
+        return render(request, 'shop/cart.html', context)
+    return render(request, 'shop/cart.html')
 def updateItem(request):
     
     data = json.loads(request.body)
@@ -181,18 +201,20 @@ def updateItem(request):
     return JsonResponse('Item was added', safe=False)
 
 def checkout(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, completed=False)
-        items = order.orderitem_set.all()
-        cartItems = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total':0, 'get_cart_items':0}
-        cartItems = order['get_cart_items']
+    if not request.user.is_superuser:
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, completed=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+        else:
+            items = []
+            order = {'get_cart_total':0, 'get_cart_items':0}
+            cartItems = order['get_cart_items']
 
-    context = {'items':items, 'order':order, 'cartItems':cartItems}
-    return render(request, 'shop/checkout.html', context)
+        context = {'items':items, 'order':order, 'cartItems':cartItems}
+        return render(request, 'shop/checkout.html', context)
+    return render(request, 'shop/checkout.html')
     
 def enviar_correo(name, total, items, payment_method, order_id, email, code):
     subject = 'Your SkillSetGo Order Details'
@@ -240,4 +262,5 @@ def process_payment(request):
         else:
             messages.error(request, 'Invalid payment method selected.')
         
+
 
