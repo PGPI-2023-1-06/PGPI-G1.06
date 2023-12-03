@@ -1,19 +1,20 @@
 {% extends "shop/base.html" %}
 {% load static %}
-{% block title %}Pay your order{% endblock %}
+{% block title %}Paga tu Pedido{% endblock %}
 {% block content %}
-  <h1>Order summary</h1>
+  <h1>Resumen del Pedido</h1>
   <table class="cart">
-<thead> <tr>
-        <th>Image</th>
-        <th>Product</th>
-        <th>Price</th>
-        <th>Quantity</th>
+    <thead>
+      <tr>
+        <th>Imagen</th>
+        <th>Producto</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
         <th>Total</th>
       </tr>
     </thead>
  
-<tbody>
+    <tbody>
       {% for item in items %}
         <tr class="row{% cycle "1" "2" %}">
           <td>
@@ -32,7 +33,7 @@
     </tbody>
   </table>
   <form action="{% url 'payment:process' order.id %}" method="post">
-    <input type="submit" value="Pay now">
+    <input type="submit" value="Pagar ahora">
     {% csrf_token %}
   </form>
 {% endblock %}
