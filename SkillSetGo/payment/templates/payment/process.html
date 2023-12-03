@@ -1,0 +1,38 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block title %}Paga tu Pedido{% endblock %}
+{% block content %}
+  <h1>Resumen del Pedido</h1>
+  <table class="cart">
+    <thead>
+      <tr>
+        <th>Imagen</th>
+        <th>Producto</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+ 
+    <tbody>
+      {% for item in items %}
+        <tr class="row{% cycle "1" "2" %}">
+          <td>
+            <img src="{% if item.product.image %}{{ item.product.image.url }}
+            {% else %}{% static "img/no_image.png" %}{% endif %}">
+          </td>
+          <td>{{ item.product.name }}</td>
+          <td class="num">${{ item.product.price }}</td>
+          <td class="num">{{ item.quantity }}</td>
+        </tr>
+      {% endfor %}
+      <tr class="total">
+        <td colspan="4">Total</td>
+        <td class="num">${{ order.get_cart_total }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <form action="{% url 'payment:process' order.id %}" method="post">
+    <input type="submit" value="Pagar ahora">
+    {% csrf_token %}
+  </form>
+{% endblock %}

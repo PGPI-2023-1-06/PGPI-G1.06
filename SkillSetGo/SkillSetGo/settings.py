@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'payment.apps.PaymentConfig',
     'shop.apps.ShopConfig',
     
 ]
@@ -147,3 +147,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51OIZ2uBzbqclUMM70CnfyDZY68pTAC6gT0yI0Zzd2anCMYdfVkkywWij0wAMQaqW9XNhfYlv0Kiq96O0j2CZyNHj00o97ike5H' # Publishable key 
+STRIPE_SECRET_KEY = 'sk_test_51OIZ2uBzbqclUMM7WivwAtRgBXQkE91PEwUPttnFiThsrXHJPbthnrqdBaxN14xcgzKcfcGEOAHwluxaXqD4bRYO00BrnGMjEt' # Secret key 
+STRIPE_API_VERSION = '2022-08-01'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'skillsetgo4@gmail.com'
+EMAIL_HOST_PASSWORD = 'xhbs jevx vqqh tvno'

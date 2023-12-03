@@ -1,0 +1,6 @@
+<h2>Add a new product</h2>
+<form action="{% url "product_form" %}" method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="Add product"></p>
+</form>

@@ -5,6 +5,14 @@
  <p>Welcome!</p>
  {% if user.is_superuser %}
     <p>¡Eres un superusuario!</p>
+
     <a href = "/account/administration/reclamation">Reclamaciones</a>
+    <a href = "/account/administration/sales_management">Gestion de ventas</a>
+
+    <a href = "/account/administration/product">Add Product</a>
+    <a href = "/account/administration/category">Add Category</a>
+    <a href = "/account/administration/subject">Add Subject</a>
+    <a href = "/account/administration/professor">Add Professor</a>
+    <a href = "/account/administration/reclamation">Reclamations</a>
 {% endif %}
 {% endblock %}

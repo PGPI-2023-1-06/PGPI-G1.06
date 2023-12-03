@@ -6,8 +6,15 @@
 {% endblock %}
 
 {% block content %}
-  <div id="sidebar">
-    <h3>Categorias</h3>
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<div id="sidebar">
+  <h3>Categorias</h3>
     <ul>
       <li {% if not category %}class="selected"{% endif %}>
         <a href="{% url "shop:product_list" %}">Todas</a>
@@ -19,7 +26,6 @@
       {% endfor %}
     </ul>
   </div>
-
   <div id="main" class="product-list">
     <h1>{% if category %}{{ category.name }}{% else %}Productos{% endif %}</h1>
     <div class="row">
@@ -31,8 +37,12 @@
           <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
           <br>
           ${{ product.price }}
+          <br>{% if product.quota > 0 %}
+        <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Añadir al carrito</button>
+        {% else %}
+            <button class="btn btn-danger" disabled>Clase agotada</button>
+        {% endif %}
         </div>
-
         {% if forloop.counter|divisibleby:3 and not forloop.last %}
           </div><div class="row">
         {% endif %}
