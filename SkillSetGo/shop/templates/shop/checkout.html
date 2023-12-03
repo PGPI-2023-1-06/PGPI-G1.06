@@ -31,7 +31,7 @@
                 <div class="form-group">
                     <label for="payment_method">Payment options:</label>
                     <select class="form-control" name="payment_method" id="payment_method">
-                        {% if order.is_in_person %}
+                        {% if order.is_in_person or fisico%}
                         <option value="Cash">Cash on Delivery</option>
                         {% endif %}
                         <option value="Stripe">Pay with Stripe</option>

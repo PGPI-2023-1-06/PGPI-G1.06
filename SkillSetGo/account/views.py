@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
 from shop.models import Comment, Customer, Order
+from shop.utils import cartData
 
 
 
@@ -36,15 +37,9 @@ def dashboard(request):
 
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
+
         return render(request, 'account/dashboard.html', {'section': 'dashboard', 'cartItems': cartItems})
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 

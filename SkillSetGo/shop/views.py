@@ -24,17 +24,9 @@ def product_list(request, category_slug=None):
     
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
 
-        
         return render(request,
         'shop/product/list.html',
         {'category': category,
@@ -59,15 +51,8 @@ def product_detail(request, id, slug):
 
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
 
         return render(request,
         'shop/product/detail.html',
@@ -137,15 +122,8 @@ def index(request):
 
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
 
         return render(request, 'shop/product/search_results.html', {
             'products': products,
@@ -163,19 +141,16 @@ def index(request):
 
 def cart(request):
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
+        items = data['items']
+        order = data['order']
 
         context = {'items':items, 'order':order, 'cartItems':cartItems}
+        
         return render(request, 'shop/cart.html', context)
     return render(request, 'shop/cart.html')
+
 def updateItem(request):
     
     data = json.loads(request.body)
@@ -216,6 +191,18 @@ def updateItem(request):
 
 def checkout(request):
     if not request.user.is_superuser:
+        data = cartData(request)
+        cartItems = data['cartItems']
+        items = data['items']
+        order = data['order']
+
+        fisico = False
+        if not request.user.is_authenticated:
+            for item in items:
+                if (Product.objects.get(id = item['product']['id']).category.name == 'Fisico'):
+                   fisico = True
+
+        context = {'items':items, 'order':order, 'cartItems':cartItems, 'fisico':fisico}
         if request.user.is_authenticated:
             customer = request.user.customer
             order, created = Order.objects.get_or_create(customer=customer, completed=False)
@@ -233,7 +220,6 @@ def checkout(request):
 
         context = {'items':items, 'order':order, 'cartItems':cartItems}
         return render(request, 'shop/checkout.html', context)
-    return render(request, 'shop/checkout.html')
 
 def process_payment(request):
     if request.method == 'POST':
@@ -258,6 +244,56 @@ def process_payment(request):
         'code': code
         }
 
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            # Retrieve form data
+            customer = request.user.customer
+            order = get_object_or_404(Order, customer=customer, completed=False)
+            items = order.orderitem_set.all()
+            total = order.get_cart_total
+            order_id = order.id
+            code = order.code
+            email = request.POST.get('email')
+            name = request.POST.get('name')
+            payment_method = request.POST.get('payment_method')
+        else:
+            # handle guest user situation:
+            email = request.POST.get('email')
+            name = request.POST.get('name')
+            payment_method = request.POST.get('payment_method')
+            
+            data = cookieCart(request)
+            items = data['items']
+
+            customer, created = Customer.objects.get_or_create(
+                email=email
+            )
+            customer.name = name
+            customer.save()
+            
+            order = Order.objects.create(
+                customer = customer,
+                completed = False
+            )
+            items2 = []
+            for item in items:
+                
+
+                product = Product.objects.get(id=item['product']['id'])
+                
+                orderItem = OrderItem.objects.create(
+                    product=product,
+                    order=order,
+                    quantity=item['quantity']
+                )
+                items2.append(orderItem)
+            
+            items2 = order.orderitem_set.all()
+            print('ok')
+            total = order.get_cart_total
+            order_id = order.id
+            code = order.code
+        
         # Process the payment method
         if payment_method == 'Cash':
             # Handle Cash payment logic
