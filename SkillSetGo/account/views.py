@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
+
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -136,7 +137,7 @@ def register(request):
             # Create a customer object to link orders to users
             customer = Customer.objects.create(user=new_user, name=new_user.username, email=new_user.email)
             customer.save()
-            return render(request, 'account/register_done.html',{'new_user': new_user})
+            return redirect('login')
     else:
         user_form = UserRegistrationForm()
     return render(request,'account/register.html',{'user_form': user_form})

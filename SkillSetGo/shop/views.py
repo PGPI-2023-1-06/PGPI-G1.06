@@ -271,3 +271,5 @@ def process_payment(request):
         
 
 
+def aboutUs(request):
+    return render(request, 'shop/aboutUs.html')

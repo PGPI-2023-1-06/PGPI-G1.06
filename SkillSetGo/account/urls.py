@@ -6,7 +6,7 @@ from .forms import EmailAuthenticationForm
 urlpatterns = [
     #path('login/', views.user_login, name='login'),
     path('login/', auth_views.LoginView.as_view(authentication_form=EmailAuthenticationForm), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='dashboard'), name='logout'),
     path('register/', views.register, name='register'),
 
     # change password urls

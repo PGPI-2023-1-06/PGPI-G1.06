@@ -1,0 +1,49 @@
+{% extends "shop/base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{% static "css/base.css" %}" type="text/css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container img {
+            width: 100%;
+            height: auto;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}
+        <div class="container">
+            <img src="https://i.imgur.com/vooWK6W.png" alt="Centered Image">
+            <p class="description">
+                Bienvenido a SkillSetGo, tu plataforma para reservar clases con los mejores profesores. Ofrecemos una amplia variedad de cursos para ayudarte a mejorar tus habilidades en diferentes áreas. Ya sea que estés buscando clases de idiomas, desarrollo de software o cualquier otro tema, ¡tenemos algo para ti!
+           
+            </p>
+            </p> Para más información puedes contactar con nosotros en skillsetgo@gmail.es</p>
+        </div>
+    {% endblock %}
+</body>
+</html>
