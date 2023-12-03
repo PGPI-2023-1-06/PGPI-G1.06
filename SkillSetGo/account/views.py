@@ -1,12 +1,15 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, login
+from django.urls import reverse
+from django.contrib.auth.models import User
 from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm, ProfessorForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
 from shop.models import Comment, Customer, Order
 from shop.utils import cartData
+
 
 
 def user_login(request):
@@ -150,3 +153,16 @@ def close_reclamation(request,id):
     return render(request,
     'account/dashboard.html',
     {'section': 'dashboard'})
+
+#Gestion de ventas
+def sales_management(request):
+    users = User.objects.all()
+    return render(request, 'account/administration/sales_management.html', {'users': users})
+
+def delete_user(request, user_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+        return HttpResponseRedirect(reverse('sales_management'))
+
+    return render(request, 'account/dashboard.html', {'section': 'dashboard'})
