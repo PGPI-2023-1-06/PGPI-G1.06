@@ -28,5 +28,6 @@ urlpatterns = [
 
     #sales_management urls
     path('administration/sales_management/', views.sales_management, name='sales_management'),
+     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
 
 ]

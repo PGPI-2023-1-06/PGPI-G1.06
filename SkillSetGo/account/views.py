@@ -1,6 +1,7 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, login
+from django.urls import reverse
 
 from shop.models import Comment, Customer, Order
 from .forms import LoginForm, UserRegistrationForm
@@ -85,3 +86,11 @@ def close_reclamation(request,id):
 def sales_management(request):
     users = User.objects.all()
     return render(request, 'account/administration/sales_management.html', {'users': users})
+
+def delete_user(request, user_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+        return HttpResponseRedirect(reverse('sales_management'))
+
+    return render(request, 'account/dashboard.html', {'section': 'dashboard'})
