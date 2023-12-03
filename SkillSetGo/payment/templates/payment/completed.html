@@ -1,26 +1,26 @@
 {% extends "shop/base.html" %}
 {% load static %}
-{% block title %}Order Confirmation{% endblock %}
+{% block title %}Confirmación de Pedido{% endblock %}
 {% block content %}
         <div class="col-lg-6">
             <div class="box-element">
-                <h2>Order details</h2>
+                <h2>Detalles del Pedido</h2>
 
-                <p>Your order with id {{ order.id }} has been processed.</p>
-                <p>Here are your order details:</p>
+                <p>Su pedido con ID {{ order.id }} ha sido procesado.</p>
+                <p>Aquí están los detalles de su pedido:</p>
 
                 <p><strong>Total: </strong>€{{ order.get_cart_total|floatformat:2 }}</p>
 
-                <h4>Products</h4>
+                <h4>Productos</h4>
 
                 <ul>
                     {% for item in items %}
-                        <li>{{ item.product.name }} - Price: {{ item.product.price|floatformat:2 }}€ - Quantity: {{ item.quantity }}</li>
+                        <li>{{ item.product.name }} - Precio: {{ item.product.price|floatformat:2 }}€ - Cantidad: {{ item.quantity }}</li>
                     {% endfor %}
                 </ul>
                 
-                <p><strong>Class code: </strong>{{ code }}</p>
-                <p>Thanks for your order!</p>
+                <p><strong>Código de Clase: </strong>{{ code }}</p>
+                <p>¡Gracias por su pedido!</p>
             </div>
         </div>
     {% endblock %}
