@@ -193,10 +193,17 @@ def updateItem(request):
     if product.quota <= 0:
         messages.error(request, 'La clase ya esta completa.')
     else:
-        if action == 'add' and orderItem.quantity < 1:
-            orderItem.quantity = orderItem.quantity + 1
-        elif action == 'add' and orderItem.quantity == 1:
-            messages.error(request, 'Solo puedes reservar la misma clase una vez.')
+        orders = Order.objects.filter(customer=customer, completed=True)
+        has_bought_product = any(order.orderitem_set.filter(product=product).exists() for order in orders)
+        if has_bought_product:
+            messages.error(request, 'Este artículo ya ha sido comprado.')
+        elif action == 'add' and has_bought_product == False:
+            if orderItem.quantity < 1:
+                orderItem.quantity += 1
+            elif orderItem.quantity == 1:
+                messages.error(request, 'Solo puedes reservar la misma clase una vez.')
+        
+
     if action == 'remove':
         orderItem.quantity = orderItem.quantity - 1
 
