@@ -52,6 +52,11 @@ def payment_completed(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     items = order.orderitem_set.all()
     code = order.code
+    # Decrement product quota for each item in the order
+    for item in items:
+        product = item.product
+        product.quota -= 1
+        product.save()
     return render(request, 'payment/completed.html', {'order': order,
         'items': items, 'code': code})
 

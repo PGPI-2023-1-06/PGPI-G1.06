@@ -188,9 +188,14 @@ def updateItem(request):
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-    if action == 'add':
-        orderItem.quantity = orderItem.quantity + 1
-    elif action == 'remove':
+    if product.quota <= 0:
+        messages.error(request, 'La clase ya esta completa.')
+    else:
+        if action == 'add' and orderItem.quantity < 1:
+            orderItem.quantity = orderItem.quantity + 1
+        elif action == 'add' and orderItem.quantity == 1:
+            messages.error(request, 'Solo puedes reservar la misma clase una vez.')
+    if action == 'remove':
         orderItem.quantity = orderItem.quantity - 1
 
     orderItem.save()
@@ -211,6 +216,11 @@ def checkout(request):
             items = []
             order = {'get_cart_total':0, 'get_cart_items':0}
             cartItems = order['get_cart_items']
+        for item in items:
+            product = item.product
+            if product.quota <= 0:
+                messages.error(request, 'La clase ya esta completa.')
+                return redirect('shop:cart')
 
         context = {'items':items, 'order':order, 'cartItems':cartItems}
         return render(request, 'shop/checkout.html', context)
@@ -261,6 +271,7 @@ def process_payment(request):
             return redirect(f'/payment/process/{order.id}/')
         else:
             messages.error(request, 'Invalid payment method selected.')
+        
         
 
 
