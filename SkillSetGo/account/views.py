@@ -155,3 +155,5 @@ def close_reclamation(request,id):
     return render(request,
     'account/dashboard.html',
     {'section': 'dashboard'})
+
+

@@ -6,7 +6,7 @@
             <div class="box-element">
                 <h2>Detalles del Pedido</h2>
 
-                <p>Su pedido con ID {{ order.id }} ha sido procesado.</p>
+                <p>Su pedido con ID de seguimiento {{ order.tracking }} ha sido procesado.</p>
                 <p>Aquí están los detalles de su pedido:</p>
 
                 <p><strong>Total: </strong>€{{ order.get_cart_total|floatformat:2 }}</p>

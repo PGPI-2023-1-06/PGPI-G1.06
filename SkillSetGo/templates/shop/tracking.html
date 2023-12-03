@@ -1,0 +1,46 @@
+{% extends "shop/base.html" %}
+{% load static %}
+    {% block content %}
+<style>
+    form {
+        text-align: center;
+        margin-top: 50px; 
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px; 
+    }
+
+    input {
+        width: 200px; 
+        padding: 5px;
+        border: none; 
+        border-bottom: 1px solid black; 
+    }
+
+    button {
+        padding: 5px 10px;
+    }
+</style>
+
+<form method="post" action="{% url 'shop:tracking' %}">
+    {% csrf_token %}
+    <label for="tracking_id" ></label>
+    <input type="text" name="tracking_id" placeholder="ID de Seguimiento" required>
+    <button  class="btn" type="submit"><img src="{% static "images/lupa.png" %}" width="20px" height="auto"></button>
+</form>
+
+
+
+{% if order %}
+    <h2>Detalles del pedido</h2>
+    <p>Código de la clase: {{ order.code }}</p>
+    <p>Fecha de Pedido: {{ order.date_ordered }}</p>
+    <!-- Agrega otros detalles según tus necesidades -->
+{% endif %}
+
+{% if mensaje_error %}
+    <p>{{ mensaje_error }}</p>
+{% endif %}
+ {% endblock %}
