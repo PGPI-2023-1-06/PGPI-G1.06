@@ -57,8 +57,11 @@ def payment_completed(request, order_id):
         product = item.product
         product.quota -= 1
         product.save()
-    # Reset the cart by deleting all items
-    order.orderitem_set.all().delete()
+
+    # Mark Order as complete, so that user gets assigned a new order with an empty cart
+    order.completed = True
+    order.save()
+    
     return render(request, 'payment/completed.html', {'order': order,
         'items': items, 'code': code})
     
