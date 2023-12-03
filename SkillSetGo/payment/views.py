@@ -57,8 +57,11 @@ def payment_completed(request, order_id):
         product = item.product
         product.quota -= 1
         product.save()
+    # Reset the cart by deleting all items
+    order.orderitem_set.all().delete()
     return render(request, 'payment/completed.html', {'order': order,
         'items': items, 'code': code})
+    
 
 def payment_canceled(request):
     return render(request, 'payment/canceled.html')

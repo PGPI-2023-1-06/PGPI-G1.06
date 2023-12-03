@@ -38,7 +38,11 @@
         <br>
         ${{ product.price }}
         <br>
-        <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+        {% if product.quota > 0 %}
+        <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Añadir al carrito</button>
+        {% else %}
+            <button class="btn btn-danger" disabled>Clase agotada</button>
+        {% endif %}
     </div>
     {% endfor %}
     
