@@ -1,0 +1,6 @@
+<h2>Add a new professor</h2>
+<form action="{% url "professor_form" %}" method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="Add professor"></p>
+</form>

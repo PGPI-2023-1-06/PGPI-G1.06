@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q  
 from django.views.decorators.http import require_POST
-from .forms import CommentForm
+from .forms import *
 from .models import Category, Product, Professor, Subject, Customer, Order, OrderItem ,Comment
 from django.http import JsonResponse
 from django.urls import reverse
