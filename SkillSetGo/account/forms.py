@@ -11,8 +11,11 @@ class EmailAuthenticationForm(AuthenticationForm):
 
 
 class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
+    username = forms.CharField(label = "Nombre de usuario")
+    first_name = forms.CharField(label = "Nombre")
+    email = forms.EmailField(label="Correo electrónico")
+    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirma la contraseña', widget=forms.PasswordInput)
     class Meta:
         model = User
         fields = ['username', 'first_name', 'email']
@@ -24,5 +27,5 @@ class UserRegistrationForm(forms.ModelForm):
     def clean_password2(self):
         cd = self.cleaned_data
         if cd['password'] != cd['password2']:
-            raise forms.ValidationError('Passwords don\'t match.')
+            raise forms.ValidationError('La contraseña no coincide')
         return cd['password2']

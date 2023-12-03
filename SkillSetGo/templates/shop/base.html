@@ -53,9 +53,11 @@
             
                 <a href="{% url 'dashboard' %}">Mi perfil</a> 
             {% else %}
-            <a href="{% url 'login' %}">Iniciar sesión</a>
+            <a href="{% url 'login' %}">Iniciar sesión</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'register' %}">Regístrate</a>
             {% endif %}
         </div>
+   
         <div class="cart ml-auto">
             <a href="/aboutUs">Sobre nosotros</a>
         </div>
