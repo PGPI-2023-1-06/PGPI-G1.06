@@ -4,10 +4,31 @@ from django.conf import settings
 from django.shortcuts import render, redirect, reverse,\
                              get_object_or_404
 from shop.models import Order
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # create the Stripe instance
 stripe.api_key = settings.STRIPE_SECRET_KEY
 stripe.api_version = settings.STRIPE_API_VERSION
+
+def enviar_correo(total, items, order_id, email, code):
+    subject = 'Your SkillSetGo Order Details'
+    from_email = 'skillsetgo4@gmail.com'
+    to_email = [email]
+    order = get_object_or_404(Order, pk=order_id)
+
+    context = {
+        'total': total,
+        'items': items,
+        'order': order,
+        'code': code,
+        }
+
+    html_message = render_to_string('payment/completed.html', context)
+    plain_message = strip_tags(html_message)
+
+    send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
 
 def payment_process(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
@@ -52,6 +73,9 @@ def payment_completed(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     items = order.orderitem_set.all()
     code = order.code
+    total = order.get_cart_total
+    email = request.session['email'] 
+    enviar_correo(total, items, order_id, email, code)
     return render(request, 'payment/completed.html', {'order': order,
         'items': items, 'code': code})
 
