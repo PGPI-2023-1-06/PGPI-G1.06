@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 
 from shop.models import Comment, Customer, Order
@@ -57,7 +57,7 @@ def register(request):
             # Create a customer object to link orders to users
             customer = Customer.objects.create(user=new_user, name=new_user.username, email=new_user.email)
             customer.save()
-            return render(request, 'account/register_done.html',{'new_user': new_user})
+            return redirect('login')
     else:
         user_form = UserRegistrationForm()
     return render(request,'account/register.html',{'user_form': user_form})

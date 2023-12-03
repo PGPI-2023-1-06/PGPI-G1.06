@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(widget=forms.TextInput(attrs={'autofocus': True}), label="Email")
-    password = forms.CharField(widget=forms.PasswordInput, label="Password")
+    email = forms.EmailField(widget=forms.TextInput(attrs={'autofocus': True}), label="Correo electrónico")
+    password = forms.CharField(widget=forms.PasswordInput,label='Contraseña')
 
 class EmailAuthenticationForm(AuthenticationForm):
-    username = forms.EmailField(widget=forms.TextInput(attrs={'autofocus': True}), label=("Email"))
+    username = forms.EmailField(widget=forms.TextInput(attrs={'autofocus': True}), label=("Correo electrónico"))
 
 
 class UserRegistrationForm(forms.ModelForm):

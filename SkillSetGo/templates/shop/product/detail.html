@@ -6,43 +6,46 @@
 {% block content %}
 <div class="product-detail">
     <img src="{% if product.image %}{{ product.image.url }}{% else %}
-    {% static "img/no_image.png" %}{% endif %}">
+    {% static "image/noimage.jpg" %}{% endif %}">
     <h1> {{ product.name }}</h1>
-    <h2>Init date: {{ product.init_dateTime }}</h2>
-    <h2>Finish date: {{ product.finish_dateTime }}</h2>
+    <h2>Fecha: {{ product.init_dateTime }}</h2>
+   <!-- <h2>Finish date: {{ product.finish_dateTime }}</h2>-->
     <h2>
-    Category: 
         <a href="{{ product.category.get_absolute_url }}">
             {{ product.category }}
         </a>
     </h2>
     <h2>
-    Professor: {{ product.professor }}
+    Profesor: {{ product.professor }}
     </h2>
     <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
     <h2>
-    Subjetc: {{ product.subject}}
+    Asignatura: {{ product.subject}}
     </h2>
-    <p class="price">Price: ${{ product.price }}</p>
-    <h3>description:</h3> {{ product.description|linebreaks }}
+    <p class="price"> {{ product.price }}€</p>
+    <h3>Descripción:</h3> {{ product.description|linebreaks }}
 
-    {% with comments.count as total_comments %}
-    <h2>
-        {{ total_comments }} comment{{ total_comments|pluralize }}
-    </h2>
-    {% endwith %}
+{% with comments.count as total_comments %}
+<h2>
+    {{ total_comments }} comentario{{ total_comments|pluralize }}
+</h2>
+{% endwith %}
 
-    {% for comment in comments %}
-    <div class="comment">
-        <p class="info">
-            Comment {{ forloop.counter }} by {{ comment.name }}
-            {{ comment.created }}
-        </p>
-        {{ comment.body|linebreaks }}
-    </div>
-    {% empty %}
-    <p>There are no comments.</p>
-    {% endfor %}
-    {% include "shop/product/includes/comment_form.html" %}
+{% for comment in comments %}
+<div class="comment">
+    <p class="info">
+        Comentario {{ forloop.counter }} por {{ comment.name }} - {{ comment.created }}
+    </p>
+    {{ comment.body }}
+    {% if not forloop.last %}
+        <hr> {# Agrega una línea horizontal si no es el último comentario #}
+    {% endif %}
+</div>
+{% empty %}
+<p>No hay comentarios</p>
+{% endfor %}
+
+{% include "shop/product/includes/comment_form.html" %}
+
 </div>
 {% endblock %}
