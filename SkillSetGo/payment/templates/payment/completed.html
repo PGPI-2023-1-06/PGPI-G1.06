@@ -23,4 +23,9 @@
                 <p>¡Gracias por su pedido!</p>
             </div>
         </div>
+        <script type="text/javascript">
+            cart = {}
+            console.log('Cart was created')
+            document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
+        </script>
     {% endblock %}
