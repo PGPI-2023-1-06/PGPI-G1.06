@@ -7,6 +7,7 @@ from .models import Category, Product, Professor, Subject, Customer, Order, Orde
 from django.http import JsonResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -82,7 +83,7 @@ def product_detail(request, id, slug):
         'comments': comments,
         'form': form})
 
-
+@login_required
 @require_POST
 def product_comment(request, id,slug):
     product = get_object_or_404(Product,
@@ -90,6 +91,7 @@ def product_comment(request, id,slug):
     slug=slug,
     available=True)
     comment = None
+    comments = product.comments.filter(active=True)
     # A comment was posted
     form = CommentForm(data=request.POST)
     if form.is_valid():
@@ -103,9 +105,11 @@ def product_comment(request, id,slug):
             comment.active=False
         # Save the comment to the database
         comment.save()
-    return render(request, 'shop/product/comment.html',
+        form = CommentForm()
+    return render(request, 'shop/product/detail.html',
         {'product': product,
         'form': form,
+        'comments': comments,
         'comment': comment})
 
 
