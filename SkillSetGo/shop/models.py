@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
 
 # Create your models here.
 class Category(models.Model):
@@ -64,6 +65,7 @@ class Product(models.Model):
     finish_dateTime = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    quota =  models.IntegerField(default=20)
     class Meta:
         ordering = ['name']
         indexes = [
@@ -87,6 +89,7 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
+    reclamation = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['created']
@@ -101,10 +104,27 @@ class Comment(models.Model):
         return reverse('shop:product_comment',args=[self.id, self.slug])
 
 
+class Customer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=200, null=True)
+    email = models.EmailField(max_length=200, null=True)
+
+    def __str__(self):
+        return self.name
+
+def get_code():
+        code = get_random_string(length=8)
+        return code
+
 class Order(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     date_ordered = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False) #to know if products can still be added to the order
+    code = models.CharField(
+        max_length = 10,
+        blank=True,
+        editable=False,
+        default=get_code)
 #aaa
     def __str__(self):
         return str(self.id)
@@ -121,6 +141,15 @@ class Order(models.Model):
         total = sum([item.quantity for item in orderitems])
         return total
 
+    @property
+    def is_in_person(self):
+        orderitems = self.orderitem_set.all()
+        cat = None
+        for item in orderitems:
+            if item.product.category.name == 'Fisico':
+                cat = True
+        return cat
+
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
@@ -134,3 +163,4 @@ class OrderItem(models.Model):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+

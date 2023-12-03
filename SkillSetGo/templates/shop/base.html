@@ -13,12 +13,12 @@
     <script type="text/javascript">
         var user = '{{request.user}}'
 
-        function getCookie(name) {
+        function getToken(name) {
             var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
+            if (document.cookie && document.cookie !== '') {
                 var cookies = document.cookie.split(';');
                 for (var i=0; i<cookies.length; i++) {
-                    var cookie = cookies[1].trim();
+                    var cookie = cookies[i].trim();
                     if (cookie.substring(0, name.length + 1) === (name + '=')) {
                         cookieValue = decodeURIComponent(
                             cookie.substring(name.length + 1)
@@ -29,14 +29,16 @@
             }
             return cookieValue;
         }
-        var csrftoken = getCookie('csrftoken');
+        var csrftoken = getToken('csrftoken');
+
     </script>
 
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">My Shop</a>
+    <a class="navbar-brand" href="/"><img src="https://i.imgur.com/vooWK6W.png" style="width: 120px; height: auto;">
+</a>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <form class="form-inline my-2 my-lg-0" method="POST" role="search" action="{% url 'shop:index' %}" >
@@ -44,13 +46,23 @@
             <input class="form-control me-2 mr-sm-2" type="search" placeholder="Search for something" name="search_query" required aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
-        
-        
         <div class="ml-auto">
-            <a href="{% url 'login' %}">Log in</a></div>
-            <div class="cart ml-auto">
-                Your cart is empty.
-            </div>
+            
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Log out</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+                <a href="{% url 'dashboard' %}">My Profile</a> 
+            {% else %}
+            <a href="{% url 'login' %}">Log in</a>
+            {% endif %}
+        </div>
+
+        <div class="cart ml-auto">
+         <a href="{% url 'shop:cart' %}">
+                <img  id="cart-icon" src="{% static 'images/cart.png' %}" width="32px" height="32px">
+         </a>
+         <p id="cart-total">{{cartItems}}</p>
+        </div>
     
         </div>
     </nav>
@@ -61,14 +73,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
+<div id="content">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
 
 
-        <div id="content">
-        {% block content %}
-        {% endblock %}
-        </div>
 
-        <script type="text/javascript" src="{%static 'js.cart.js'%}"></script>
+
 
 
 </body>

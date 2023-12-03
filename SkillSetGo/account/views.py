@@ -1,12 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
-
-
 from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm, ProfessorForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
+from shop.models import Comment, Customer, Order
 
 
 def user_login(request):
@@ -14,7 +13,7 @@ def user_login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            user = authenticate(request, username=cd['username'],password=cd['password'])
+            user = authenticate(request, username=cd['email'],password=cd['password'])
             if user is not None:
                 if user.is_active:
                     login(request, user)
@@ -30,6 +29,19 @@ def user_login(request):
 
 @login_required
 def dashboard(request):
+
+    # necessary for the shopping cart digit
+    if not request.user.is_superuser:
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, completed=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+        else:
+            items = []
+            order = {'get_cart_total':0, 'get_cart_items':0}
+            cartItems = order['get_cart_items']
+        return render(request, 'account/dashboard.html', {'section': 'dashboard', 'cartItems': cartItems})
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
 #Vistas para administrar productos
@@ -118,7 +130,28 @@ def register(request):
             user_form.cleaned_data['password'])
             # Save the User object
             new_user.save()
+            # Create a customer object to link orders to users
+            customer = Customer.objects.create(user=new_user, name=new_user.username, email=new_user.email)
+            customer.save()
             return render(request, 'account/register_done.html',{'new_user': new_user})
     else:
         user_form = UserRegistrationForm()
     return render(request,'account/register.html',{'user_form': user_form})
+
+
+#gestion de reclamaciones
+def reclamations_list(request):
+    reclamations = Comment.objects.filter(reclamation=True)
+
+        
+    return render(request,
+    'account/administration/reclamation.html',
+    {'reclamations': reclamations})
+
+#Cierre de reclamaciones
+def close_reclamation(request,id):
+    Comment.objects.filter(id=id).update(reclamation=False)
+        
+    return render(request,
+    'account/dashboard.html',
+    {'section': 'dashboard'})

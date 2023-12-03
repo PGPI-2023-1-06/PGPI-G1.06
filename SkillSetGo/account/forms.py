@@ -3,10 +3,14 @@ from django.contrib.auth.models import User
 from shop.models import Product, Category, Subject, Professor
 from django.core.exceptions import ValidationError
 import datetime, re
+from django.contrib.auth.forms import AuthenticationForm
 
 class LoginForm(forms.Form):
- username = forms.CharField()
- password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(widget=forms.TextInput(attrs={'autofocus': True}), label="Email")
+    password = forms.CharField(widget=forms.PasswordInput, label="Password")
+
+class EmailAuthenticationForm(AuthenticationForm):
+    username = forms.EmailField(widget=forms.TextInput(attrs={'autofocus': True}), label=("Email"))
 
 
 class UserRegistrationForm(forms.ModelForm):
