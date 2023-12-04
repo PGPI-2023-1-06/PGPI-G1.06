@@ -1,12 +1,15 @@
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm, ProfessorForm
+from django.urls import reverse
+from django.contrib.auth.models import User
+from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm, ProfessorForm ,UserProfileForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
 from shop.models import Comment, Customer, Order, Product, Category, Subject, Professor
 from shop.utils import cartData
+
 
 
 def user_login(request):
@@ -208,10 +211,23 @@ def register(request):
             # Create a customer object to link orders to users
             customer = Customer.objects.create(user=new_user, name=new_user.username, email=new_user.email)
             customer.save()
-            return render(request, 'account/register_done.html',{'new_user': new_user})
+            return redirect('login')
     else:
         user_form = UserRegistrationForm()
     return render(request,'account/register.html',{'user_form': user_form})
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirige a la página de perfil
+    else:
+        form = UserProfileForm(instance=request.user)
+
+    return render(request, 'account/edit_profile.html', {'form': form})
+
 
 
 #gestion de reclamaciones
@@ -230,6 +246,7 @@ def close_reclamation(request,id):
     return render(request,
     'account/dashboard.html',
     {'section': 'dashboard'})
+
 
 #Admin views for updating and deleting products/subjects/categories/professors
 @user_passes_test(lambda u: u.is_superuser)
@@ -288,3 +305,18 @@ def delete_professor(request, professor_id):
         return redirect('admin_professor_list')
     # Handle GET requests or other conditions if needed
     return render(request, 'account/administration/delete_confirmation.html', {'professor': professor})
+
+
+#Gestion de ventas
+def sales_management(request):
+    users = User.objects.all()
+    return render(request, 'account/administration/sales_management.html', {'users': users})
+
+def delete_user(request, user_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+        return HttpResponseRedirect(reverse('sales_management'))
+
+    return render(request, 'account/dashboard.html', {'section': 'dashboard'})
+

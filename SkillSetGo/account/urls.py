@@ -6,8 +6,9 @@ from .forms import EmailAuthenticationForm
 urlpatterns = [
     #path('login/', views.user_login, name='login'),
     path('login/', auth_views.LoginView.as_view(authentication_form=EmailAuthenticationForm), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='dashboard'), name='logout'),
     path('register/', views.register, name='register'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
 
     # change password urls
     path('password-change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
@@ -57,5 +58,9 @@ urlpatterns = [
     #reclamations urls
     path('administration/reclamation/', views.reclamations_list, name='reclamation'),
     path('administration/reclamation/close/<int:id>', views.close_reclamation, name='reclamation_close'),
+
+    #sales_management urls
+    path('administration/sales_management/', views.sales_management, name='sales_management'),
+     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
 
 ]

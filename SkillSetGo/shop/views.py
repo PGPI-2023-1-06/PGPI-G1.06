@@ -9,10 +9,7 @@ from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from . utils import cookieCart, cartData
+from .utils import *
 
 
 # Create your views here.
@@ -168,9 +165,21 @@ def updateItem(request):
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-    if action == 'add':
-        orderItem.quantity = orderItem.quantity + 1
-    elif action == 'remove':
+    if product.quota <= 0:
+        messages.error(request, 'La clase ya esta completa.')
+    else:
+        orders = Order.objects.filter(customer=customer, completed=True)
+        has_bought_product = any(order.orderitem_set.filter(product=product).exists() for order in orders)
+        if has_bought_product:
+            messages.error(request, 'Este artículo ya ha sido comprado.')
+        elif action == 'add' and has_bought_product == False:
+            if orderItem.quantity < 1:
+                orderItem.quantity += 1
+            elif orderItem.quantity == 1:
+                messages.error(request, 'Solo puedes reservar la misma clase una vez.')
+        
+
+    if action == 'remove':
         orderItem.quantity = orderItem.quantity - 1
 
     orderItem.save()
@@ -186,38 +195,51 @@ def checkout(request):
         cartItems = data['cartItems']
         items = data['items']
         order = data['order']
-
+        print(items)
+        print(order)
         fisico = False
         if not request.user.is_authenticated:
             for item in items:
                 if (Product.objects.get(id = item['product']['id']).category.name == 'Fisico'):
                    fisico = True
+            for item in items:
+                product = Product.objects.get(id = item['product']['id'])
+                if product.quota <= 0:
+                    messages.error(request, 'La clase ya esta completa.')
+                    return redirect('shop:cart')
+        else:           
+            for item in items:
+                product = Product.objects.get(id = item.product.id)
+                if product.quota <= 0:
+                    messages.error(request, 'La clase ya esta completa.')
+                    return redirect('shop:cart')
 
         context = {'items':items, 'order':order, 'cartItems':cartItems, 'fisico':fisico}
         return render(request, 'shop/checkout.html', context)
-    return render(request, 'shop/checkout.html')
-    
-def enviar_correo(name, total, items, payment_method, order_id, email, code):
-    subject = 'Your SkillSetGo Order Details'
-    from_email = 'skillsetgo4@gmail.com'
-    to_email = [email]
-    order = get_object_or_404(Order, pk=order_id)
 
-    context = {
+def process_payment(request):
+    '''if request.method == 'POST':
+        # Retrieve form data
+        customer = request.user.customer
+        order = get_object_or_404(Order, customer=customer, completed=False)
+        items = order.orderitem_set.all()
+        total = order.get_cart_total
+        order_id = order.id
+        code = order.code
+        email = request.POST.get('email')
+        name = request.POST.get('name')
+        payment_method = request.POST.get('payment_method')
+        request.session['email'] = email
+        context = {
         'name': name,
         'total': total,
         'items': items,
         'payment_method': payment_method,
-        'order': order,
-        'code': code,
+        'order_id': order_id,
+        'email': email,
+        'code': code
         }
-
-    html_message = render_to_string('payment/completed.html', context)
-    plain_message = strip_tags(html_message)
-
-    send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
-
-def process_payment(request):
+'''
 
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -240,46 +262,78 @@ def process_payment(request):
             data = cookieCart(request)
             items = data['items']
 
+            # create a customer in the background, user won't see this
             customer, created = Customer.objects.get_or_create(
                 email=email
             )
             customer.name = name
             customer.save()
-            
+            # create the Order from the cookie data
             order = Order.objects.create(
                 customer = customer,
                 completed = False
             )
-            items2 = []
+            # create the OrderItems from the cookie data
             for item in items:
-                
-
                 product = Product.objects.get(id=item['product']['id'])
-                
                 orderItem = OrderItem.objects.create(
                     product=product,
                     order=order,
                     quantity=item['quantity']
                 )
-                items2.append(orderItem)
-            
-            items2 = order.orderitem_set.all()
+
+            items = order.orderitem_set.all()
             total = order.get_cart_total
             order_id = order.id
             code = order.code
-        
+
+        context = {
+        'name': name,
+        'total': total,
+        'items': items,
+        'payment_method': payment_method,
+        'order_id': order_id,
+        'email': email,
+        'code': code
+        }
         # Process the payment method
         if payment_method == 'Cash':
             # Handle Cash payment logic
-            context = {'items':items, 'order':order}
-            enviar_correo(name, total, items, payment_method, order_id, email, code)
-            return redirect(f'/payment/completed/{order.id}/')
+            return redirect(f'/payment/completed/{order.id}/', context)
         elif payment_method == 'Stripe':
             # Handle Stripe payment logic
-            enviar_correo(name, total, items, payment_method, order_id, email, code)
-            return redirect(f'/payment/process/{order.id}/')
+            return redirect(f'/payment/process/{order.id}/', context)
         else:
             messages.error(request, 'Invalid payment method selected.')
         
+        
 
 
+#seguimiento
+def tracking(request):
+    order = None
+
+    if request.method == 'POST':
+        tracking_id = request.POST.get('tracking_id')
+        try:
+            order = Order.objects.get(tracking=tracking_id)
+        except Order.DoesNotExist:
+            mensaje_error = 'No se encontró ningún pedido con este ID de seguimiento.'
+            return render(request, 'shop/tracking.html', {'mensaje_error': mensaje_error})
+
+    return render(request, 'shop/tracking.html', {'order': order})
+
+def order_list(request):
+    orders = Order.objects.all()
+    
+    return render(request, 'shop/orders.html', {'orders': orders})
+
+
+def myorders(request):  
+    if request.user.is_authenticated:
+        user_orders = Order.objects.filter(customer=request.user.customer)
+        return render(request, 'shop/myorders.html', {'user_orders': user_orders})  
+    else:
+        return render(request, 'shop/myorders.html', {'user_orders': None})  #
+def aboutUs(request):
+    return render(request, 'shop/aboutUs.html')

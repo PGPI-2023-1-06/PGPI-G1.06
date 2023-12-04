@@ -113,6 +113,9 @@ def get_code():
         code = get_random_string(length=8)
         return code
 
+def get_tracking_id():
+    return get_random_string(length=10, allowed_chars='abcdefghijklmnopqrstuvwxyz0123456789')
+
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     date_ordered = models.DateTimeField(auto_now_add=True)
@@ -122,7 +125,16 @@ class Order(models.Model):
         blank=True,
         editable=False,
         default=get_code)
-#aaa
+    #seguimiento
+    tracking = models.CharField(
+        max_length=10,
+        blank=True,
+        editable=False,
+        default=get_tracking_id,
+        unique=True  # Para asegurar que cada ID de seguimiento sea único
+    )
+
+
     def __str__(self):
         return str(self.id)
 
@@ -141,10 +153,10 @@ class Order(models.Model):
     @property
     def is_in_person(self):
         orderitems = self.orderitem_set.all()
-        cat = None
+        cat = True
         for item in orderitems:
-            if item.product.category.name == 'Fisico':
-                cat = True
+            if item.product.category.name == 'Online':
+                cat = False
         return cat
 
 class OrderItem(models.Model):
