@@ -137,6 +137,25 @@ def subject_post(request):
         {'subject': subject,
         'form': form})
 
+def update_subject_form(request, id):
+    subject = get_object_or_404(Subject, pk=id)
+    form = SubjetcForm(instance=subject)
+    form.subject_id=id
+    return render(request, 'account/administration/subject_update.html', {'form': form,'subject':subject})
+
+
+def update_subject_post(request):
+    subject_initial = get_object_or_404(Subject, id=request.POST['id'])
+    form = SubjetcForm(data=request.POST)
+    if form.is_valid():
+        subject = form.save(commit=False)
+        subject.id=subject_initial.id
+        subject.save()
+
+        return redirect('admin_subject_list')
+    
+    return render(request, 'account/administration/subject_update.html', {'form': form,'subject':subject_initial})
+
 #Vistas para administrar profesores
 @user_passes_test(lambda u: u.is_superuser)
 def professor_form(request):
