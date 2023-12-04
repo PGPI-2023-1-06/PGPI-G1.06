@@ -57,18 +57,28 @@ def product_post(request):
             'form': form})
     return render(request, 'account/administration/product.html', {'form':form})
 
-def update_product_form(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
-    form = ProductForm(request.POST, instance=product)
-    return render(request, 'account/administration/product_update.html', {'form': form})
+def update_product_form(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(instance=product)
+    form.product_id=id
+    return render(request, 'account/administration/product_update.html', {'form': form,'product':product})
+
 
 def update_product_post(request):
-    form = ProductForm(request.POST)
+    product_initial = get_object_or_404(Product, pk=request.POST['id'])
+    form = ProductForm(data=request.POST)
     if form.is_valid():
-        form.save()
+        product = form.save(commit=False)
+        product.id=request.POST['id']
+        product.created=product_initial.created
+        product.save()
+
         return redirect('admin_product_list')
     
     return render(request, 'account/administration/product_update.html', {'form': form})
+
+
+
 
 #Vistas para administrar categorias
 @user_passes_test(lambda u: u.is_superuser)
