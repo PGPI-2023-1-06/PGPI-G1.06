@@ -51,7 +51,7 @@ class ProductForm(forms.ModelForm):
     finish_dateTime = forms.CharField(required=True, widget=forms.TextInput(attrs={"placeholder":'YYYY-MM-DD HH-MM-SS'}))
     class Meta:
         model = Product
-        fields = ['category', 'professor', 'subject', 'name', 'slug', 'image', 'description', 'price', 'init_dateTime', 'finish_dateTime']
+        fields = ['category', 'professor', 'subject', 'name', 'slug', 'image', 'description', 'price', 'init_dateTime', 'finish_dateTime','quota']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

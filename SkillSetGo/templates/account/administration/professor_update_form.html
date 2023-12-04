@@ -1,7 +1,12 @@
 <h2>Actualizar</h2>
 <form action="{% url "professor_update_form" %}" method="post">
 <input id="id" class="form-control" name="id" type="hidden" value="{{professor.id}}"name ="id">
-    {{ form.as_p }}
+    Nombre<br>
+    {{form.name}}<br>
+    Apellidos<br>
+    {{form.surname}}<br>
+    Url<br>
+    {{form.slug}}<br>
     {% csrf_token %}
     <p><input type="submit" value="Actualizar"></p>
 </form>
