@@ -8,11 +8,32 @@ for(var i = 0; i < updateBtns.length; i++){
 
         console.log('USER:', user)
         if(user === 'AnonymousUser'){
-            console.log('User is not authenticazted')
+            addCookieItem(product, action)
         }else{
             updateUserOrder(product, action)
         }
     })
+}
+
+function addCookieItem(productID, action){
+    console.log('User is not logged in1..')
+    if (action == 'add') {
+        if (cart[productID] == undefined) {
+            cart[productID] = {'quantity':1}
+        } else{
+            cart[productID]['quantity'] += 1
+        }
+    }
+    if (action == 'remove') {
+        cart[productID]['quantity'] -= 1
+        if (cart[productID]['quantity'] <= 0) {
+            console.log('Item should be deleted')
+            delete cart[productID]
+        }
+    }
+    console.log('Cart:', cart)
+    document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
+    location.reload()
 }
 
 function updateUserOrder(productID, action){
