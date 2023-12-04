@@ -33,7 +33,6 @@ urlpatterns = [
     path('administration/professor/post', views.professor_post, name='professor_form'),
     #reclamations urls
     path('administration/reclamation/', views.reclamations_list, name='reclamation'),
-    path('administration/reclamation/close/<int:id>', views.close_reclamation, name='reclamation_close'),
-    path('administration/pedidos/', views.order_list, name='order_list'),
+    path('administration/reclamation/close/<int:id>', views.close_reclamation, name='reclamation_close')
 
 ]

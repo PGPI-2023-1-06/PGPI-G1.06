@@ -1,4 +1,7 @@
-<!-- templates/tu_app/lista_pedidos.html -->
+{% extends "shop/base.html" %}
+{% load static %}
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,26 +11,38 @@
     <title>Listado de Pedidos</title>
 </head>
 <body>
+{% block content%}
     <h1>Listado de Pedidos</h1>
     <table>
         <thead>
             <tr>
                 <th>ID de Pedido</th>
                 <th>Cliente</th>
+                <th>Código de la clase</th>
+                <th>Id de seguimiento</th>
                 <th>Fecha de Pedido</th>
                 <!-- Agrega más encabezados según sea necesario -->
             </tr>
         </thead>
         <tbody>
+        <script>
+    // JavaScript dentro de las etiquetas <script>
+    console.log("orders", orders)
+        </script>
             {% for order in orders %}
+         
                 <tr>
                     <td>{{ order.id }}</td>
-                    <td>{{ order.customer }}</td>
-                    <td>{{ order.date_ordered }}</td>
+                    <td>{{ order.customer.email }}</td>
+                    <td>{{order.code}}</td>
+                    <td>{{order.tracking}}</td>
+                    <td>{{order.date_ordered }}</td>
+
                     <!-- Agrega más celdas según sea necesario -->
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+{% endblock %}
 </body>
 </html>

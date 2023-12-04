@@ -157,7 +157,5 @@ def close_reclamation(request,id):
     {'section': 'dashboard'})
 
 
-def order_list(request):
-    order = Order.objects.all()
-    return render(request, 'account/administration/orders.html', {'order': order})
+
 

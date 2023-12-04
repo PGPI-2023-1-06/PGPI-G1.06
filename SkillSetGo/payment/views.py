@@ -52,6 +52,8 @@ def payment_completed(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     items = order.orderitem_set.all()
     code = order.code
+    order.completed=True
+    order.save()
     return render(request, 'payment/completed.html', {'order': order,
         'items': items, 'code': code})
 
