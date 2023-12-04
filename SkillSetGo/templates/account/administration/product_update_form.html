@@ -1,0 +1,6 @@
+<h2>Actualizar producto</h2>
+<form action="{% url "update_product_form" %}" method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="Actualizar producto"></p>
+</form>

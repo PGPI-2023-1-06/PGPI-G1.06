@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Admin Professor List{% endblock %}
+{% block content %}
+<h2>Manage Existing Professors</h2>
+<a href="{% url 'dashboard' %}">&larr; Back to Dashboard</a>
+    <ul>
+        {% for professor in professors %}
+            <li>
+                <a href="{{ professor.get_absolute_url }}">{{ professor.name }}</a> - Slug: {{ professor.slug }}
+                <form action="{% url 'delete_professor' professor.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" style="padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                </form>
+            </li>
+            {% empty %}
+            <li>No professors exist.</li>
+        
+        {% endfor %}
+        
+    </ul>
+{% endblock %}

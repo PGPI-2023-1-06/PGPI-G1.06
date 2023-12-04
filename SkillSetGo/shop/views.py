@@ -264,7 +264,6 @@ def process_payment(request):
                 items2.append(orderItem)
             
             items2 = order.orderitem_set.all()
-            print('ok')
             total = order.get_cart_total
             order_id = order.id
             code = order.code
