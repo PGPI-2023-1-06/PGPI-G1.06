@@ -61,6 +61,9 @@ urlpatterns = [
 
     #sales_management urls
     path('administration/sales_management/', views.sales_management, name='sales_management'),
-     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('administration/users_management/', views.users_management, name='users_management'),
+    path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('administration/class_history/', views.class_history, name='class_history'),
+    path('administration/sales_report/', views.sales_report, name='sales_report'),
 
 ]
