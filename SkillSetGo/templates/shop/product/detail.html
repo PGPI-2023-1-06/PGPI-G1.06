@@ -16,6 +16,7 @@
     {% static "image/noimage.jpg" %}{% endif %}">
     <h1> {{ product.name }}</h1>
     <h2>Fecha: {{ product.init_dateTime }}</h2>
+    <h2>Duracion: {{ duration}} horas</h2>
    <!-- <h2>Finish date: {{ product.finish_dateTime }}</h2>-->
     <h2>
         <a href="{{ product.category.get_absolute_url }}">

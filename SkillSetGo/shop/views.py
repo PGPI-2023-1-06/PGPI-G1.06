@@ -48,7 +48,8 @@ def product_detail(request, id, slug):
     comments = product.comments.filter(active=True)
     # Form for users to comment
     form = CommentForm()
-
+    dif=product.finish_dateTime-product.init_dateTime
+    duracion = round(dif.total_seconds() / 3600, 2)
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
         data = cartData(request)
@@ -59,12 +60,14 @@ def product_detail(request, id, slug):
         {'product': product,
         'comments': comments,
         'form': form, 
-        'cartItems':cartItems})
+        'cartItems':cartItems,
+        'duration':duracion})
     return render(request,
         'shop/product/detail.html',
         {'product': product,
         'comments': comments,
-        'form': form})
+        'form': form,
+        'duration':duracion})
 
 @login_required
 @require_POST
