@@ -9,9 +9,7 @@ from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+
 
 
 # Create your views here.
@@ -26,17 +24,9 @@ def product_list(request, category_slug=None):
     
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
 
-        
         return render(request,
         'shop/product/list.html',
         {'category': category,
@@ -61,15 +51,8 @@ def product_detail(request, id, slug):
 
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
 
         return render(request,
         'shop/product/detail.html',
@@ -139,15 +122,8 @@ def index(request):
 
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
 
         return render(request, 'shop/product/search_results.html', {
             'products': products,
@@ -165,19 +141,16 @@ def index(request):
 
 def cart(request):
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
+        items = data['items']
+        order = data['order']
 
         context = {'items':items, 'order':order, 'cartItems':cartItems}
+        
         return render(request, 'shop/cart.html', context)
     return render(request, 'shop/cart.html')
+
 def updateItem(request):
     
     data = json.loads(request.body)
@@ -192,9 +165,21 @@ def updateItem(request):
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-    if action == 'add':
-        orderItem.quantity = orderItem.quantity + 1
-    elif action == 'remove':
+    if product.quota <= 0:
+        messages.error(request, 'La clase ya esta completa.')
+    else:
+        orders = Order.objects.filter(customer=customer, completed=True)
+        has_bought_product = any(order.orderitem_set.filter(product=product).exists() for order in orders)
+        if has_bought_product:
+            messages.error(request, 'Este artículo ya ha sido comprado.')
+        elif action == 'add' and has_bought_product == False:
+            if orderItem.quantity < 1:
+                orderItem.quantity += 1
+            elif orderItem.quantity == 1:
+                messages.error(request, 'Solo puedes reservar la misma clase una vez.')
+        
+
+    if action == 'remove':
         orderItem.quantity = orderItem.quantity - 1
 
     orderItem.save()
@@ -206,6 +191,18 @@ def updateItem(request):
 
 def checkout(request):
     if not request.user.is_superuser:
+        data = cartData(request)
+        cartItems = data['cartItems']
+        items = data['items']
+        order = data['order']
+
+        fisico = False
+        if not request.user.is_authenticated:
+            for item in items:
+                if (Product.objects.get(id = item['product']['id']).category.name == 'Fisico'):
+                   fisico = True
+
+        context = {'items':items, 'order':order, 'cartItems':cartItems, 'fisico':fisico}
         if request.user.is_authenticated:
             customer = request.user.customer
             order, created = Order.objects.get_or_create(customer=customer, completed=False)
@@ -215,30 +212,14 @@ def checkout(request):
             items = []
             order = {'get_cart_total':0, 'get_cart_items':0}
             cartItems = order['get_cart_items']
+        for item in items:
+            product = item.product
+            if product.quota <= 0:
+                messages.error(request, 'La clase ya esta completa.')
+                return redirect('shop:cart')
 
         context = {'items':items, 'order':order, 'cartItems':cartItems}
         return render(request, 'shop/checkout.html', context)
-    return render(request, 'shop/checkout.html')
-    
-def enviar_correo(name, total, items, payment_method, order_id, email, code):
-    subject = 'Your SkillSetGo Order Details'
-    from_email = 'skillsetgo4@gmail.com'
-    to_email = [email]
-    order = get_object_or_404(Order, pk=order_id)
-
-    context = {
-        'name': name,
-        'total': total,
-        'items': items,
-        'payment_method': payment_method,
-        'order': order,
-        'code': code,
-        }
-
-    html_message = render_to_string('payment/completed.html', context)
-    plain_message = strip_tags(html_message)
-
-    send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
 
 def process_payment(request):
     if request.method == 'POST':
@@ -252,19 +233,77 @@ def process_payment(request):
         email = request.POST.get('email')
         name = request.POST.get('name')
         payment_method = request.POST.get('payment_method')
+        request.session['email'] = email
+        context = {
+        'name': name,
+        'total': total,
+        'items': items,
+        'payment_method': payment_method,
+        'order_id': order_id,
+        'email': email,
+        'code': code
+        }
 
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            # Retrieve form data
+            customer = request.user.customer
+            order = get_object_or_404(Order, customer=customer, completed=False)
+            items = order.orderitem_set.all()
+            total = order.get_cart_total
+            order_id = order.id
+            code = order.code
+            email = request.POST.get('email')
+            name = request.POST.get('name')
+            payment_method = request.POST.get('payment_method')
+        else:
+            # handle guest user situation:
+            email = request.POST.get('email')
+            name = request.POST.get('name')
+            payment_method = request.POST.get('payment_method')
+            
+            data = cookieCart(request)
+            items = data['items']
+
+            customer, created = Customer.objects.get_or_create(
+                email=email
+            )
+            customer.name = name
+            customer.save()
+            
+            order = Order.objects.create(
+                customer = customer,
+                completed = False
+            )
+            items2 = []
+            for item in items:
+                
+
+                product = Product.objects.get(id=item['product']['id'])
+                
+                orderItem = OrderItem.objects.create(
+                    product=product,
+                    order=order,
+                    quantity=item['quantity']
+                )
+                items2.append(orderItem)
+            
+            items2 = order.orderitem_set.all()
+            print('ok')
+            total = order.get_cart_total
+            order_id = order.id
+            code = order.code
+        
         # Process the payment method
         if payment_method == 'Cash':
             # Handle Cash payment logic
-            context = {'items':items, 'order':order}
-            enviar_correo(name, total, items, payment_method, order_id, email, code)
-            return redirect(f'/payment/completed/{order.id}/')
+            return redirect(f'/payment/completed/{order.id}/', context)
         elif payment_method == 'Stripe':
             # Handle Stripe payment logic
-            enviar_correo(name, total, items, payment_method, order_id, email, code)
-            return redirect(f'/payment/process/{order.id}/')
+            return redirect(f'/payment/process/{order.id}/', context)
         else:
             messages.error(request, 'Invalid payment method selected.')
+        
         
 
 
@@ -294,3 +333,5 @@ def myorders(request):
         return render(request, 'shop/myorders.html', {'user_orders': user_orders})  
     else:
         return render(request, 'shop/myorders.html', {'user_orders': None})  #
+def aboutUs(request):
+    return render(request, 'shop/aboutUs.html')
