@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from shop.models import Product, Category, Subject, Professor
 from django.core.exceptions import ValidationError
 import datetime, re
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
 
 class LoginForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs={'autofocus': True}), label="Correo electrónico")
@@ -34,6 +34,15 @@ class UserRegistrationForm(forms.ModelForm):
             raise forms.ValidationError('La contraseña no coincide')
         return cd['password2']
 
+
+class UserProfileForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'email']
+
+    def clean_password(self):
+        # No requerir la contraseña para editar el perfil
+        return self.cleaned_data['password']
 
 class ProductForm(forms.ModelForm):
     input_formats = ['%Y-%m-%d %H:%M:%S']

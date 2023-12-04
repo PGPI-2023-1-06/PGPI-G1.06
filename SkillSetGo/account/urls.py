@@ -8,6 +8,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(authentication_form=EmailAuthenticationForm), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='dashboard'), name='logout'),
     path('register/', views.register, name='register'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
 
     # change password urls
     path('password-change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
