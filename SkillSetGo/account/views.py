@@ -1,6 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
-
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -8,7 +7,7 @@ from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, S
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
-from shop.models import Comment, Customer, Order
+from shop.models import Comment, Customer, Order, Product, Category, Subject, Professor
 from shop.utils import cartData
 
 
@@ -61,6 +60,29 @@ def product_post(request):
             'form': form})
     return render(request, 'account/administration/product.html', {'form':form})
 
+def update_product_form(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(instance=product)
+    form.product_id=id
+    return render(request, 'account/administration/product_update.html', {'form': form,'product':product})
+
+
+def update_product_post(request):
+    product_initial = get_object_or_404(Product, pk=request.POST['id'])
+    form = ProductForm(data=request.POST)
+    if form.is_valid():
+        product = form.save(commit=False)
+        product.id=request.POST['id']
+        product.created=product_initial.created
+        product.save()
+
+        return redirect('admin_product_list')
+    
+    return render(request, 'account/administration/product_update.html', {'form': form,'product':product_initial})
+
+
+
+
 #Vistas para administrar categorias
 @user_passes_test(lambda u: u.is_superuser)
 def category_form(request):
@@ -79,6 +101,25 @@ def category_post(request):
     return render(request, 'account/dashboard.html',
         {'category': category,
         'form': form})
+
+def update_category_form(request, id):
+    category = get_object_or_404(Category, pk=id)
+    form = CategoryForm(instance=category)
+    form.category_id=id
+    return render(request, 'account/administration/category_update.html', {'form': form,'category':category})
+
+
+def update_category_post(request):
+    category_initial = get_object_or_404(Category, id=request.POST['id'])
+    form = CategoryForm(data=request.POST)
+    if form.is_valid():
+        category = form.save(commit=False)
+        category.id=category_initial.id
+        category.save()
+
+        return redirect('admin_category_list')
+    
+    return render(request, 'account/administration/category_update.html', {'form': form,'category':category_initial})
 
 #Vistas para administrar asignaturas
 @user_passes_test(lambda u: u.is_superuser)
@@ -99,6 +140,25 @@ def subject_post(request):
         {'subject': subject,
         'form': form})
 
+def update_subject_form(request, id):
+    subject = get_object_or_404(Subject, pk=id)
+    form = SubjetcForm(instance=subject)
+    form.subject_id=id
+    return render(request, 'account/administration/subject_update.html', {'form': form,'subject':subject})
+
+
+def update_subject_post(request):
+    subject_initial = get_object_or_404(Subject, id=request.POST['id'])
+    form = SubjetcForm(data=request.POST)
+    if form.is_valid():
+        subject = form.save(commit=False)
+        subject.id=subject_initial.id
+        subject.save()
+
+        return redirect('admin_subject_list')
+    
+    return render(request, 'account/administration/subject_update.html', {'form': form,'subject':subject_initial})
+
 #Vistas para administrar profesores
 @user_passes_test(lambda u: u.is_superuser)
 def professor_form(request):
@@ -117,6 +177,25 @@ def professor_post(request):
     return render(request, 'account/dashboard.html',
         {'professor': professor,
         'form': form})
+
+def update_professor_form(request, id):
+    professor = get_object_or_404(Professor, pk=id)
+    form = ProfessorForm(instance=professor)
+    form.professor_id=id
+    return render(request, 'account/administration/professor_update.html', {'form': form,'professor':professor})
+
+
+def update_professor_post(request):
+    professor_initial = get_object_or_404(Professor, id=request.POST['id'])
+    form = ProfessorForm(data=request.POST)
+    if form.is_valid():
+        professor = form.save(commit=False)
+        professor.id=professor_initial.id
+        professor.save()
+
+        return redirect('admin_professor_list')
+    
+    return render(request, 'account/administration/professor_update.html', {'form': form,'professor':professor_initial})
 
 def register(request):
     if request.method == 'POST':
@@ -167,6 +246,65 @@ def close_reclamation(request,id):
     return render(request,
     'account/dashboard.html',
     {'section': 'dashboard'})
+
+
+#Admin views for updating and deleting products/subjects/categories/professors
+@user_passes_test(lambda u: u.is_superuser)
+def admin_product_list(request):
+    products = Product.objects.all()
+    return render(request, 'account/administration/admin_product_list.html', {'products': products})
+
+
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    if request.method == 'POST':
+        product.delete()
+        # Redirect to the product list page after deletion
+        return redirect('admin_product_list')
+    # Handle GET requests or other conditions if needed
+    return render(request, 'account/administration/delete_confirmation.html', {'product': product})
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_category_list(request):
+    categories = Category.objects.all()
+    return render(request, 'account/administration/admin_category_list.html', {'categories': categories})
+
+def delete_category(request, category_id):
+    category = get_object_or_404(Category, pk=category_id)
+    if request.method == 'POST':
+        category.delete()
+        # Redirect to the product list page after deletion
+        return redirect('admin_category_list')
+    # Handle GET requests or other conditions if needed
+    return render(request, 'account/administration/delete_confirmation.html', {'category': category})
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_subject_list(request):
+    subjects = Subject.objects.all()
+    return render(request, 'account/administration/admin_subject_list.html', {'subjects': subjects})
+
+def delete_subject(request, subject_id):
+    subject = get_object_or_404(Subject, pk=subject_id)
+    if request.method == 'POST':
+        subject.delete()
+        # Redirect to the product list page after deletion
+        return redirect('admin_subject_list')
+    # Handle GET requests or other conditions if needed
+    return render(request, 'account/administration/delete_confirmation.html', {'subject': subject})
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_professor_list(request):
+    professors = Professor.objects.all()
+    return render(request, 'account/administration/admin_professor_list.html', {'professors': professors})
+
+def delete_professor(request, professor_id):
+    professor = get_object_or_404(Professor, pk=professor_id)
+    if request.method == 'POST':
+        professor.delete()
+        # Redirect to the product list page after deletion
+        return redirect('admin_professor_list')
+    # Handle GET requests or other conditions if needed
+    return render(request, 'account/administration/delete_confirmation.html', {'professor': professor})
 
 
 #Gestion de ventas

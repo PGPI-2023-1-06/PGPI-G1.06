@@ -117,6 +117,8 @@ class CategoryForm(forms.ModelForm):
         model=Category
         fields = ['name','slug']
 
+
+
 class SubjetcForm(forms.ModelForm):
     class Meta:
         model=Subject

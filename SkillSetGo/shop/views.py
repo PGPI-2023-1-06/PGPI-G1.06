@@ -281,6 +281,7 @@ def process_payment(request):
                     order=order,
                     quantity=item['quantity']
                 )
+
             items = order.orderitem_set.all()
             total = order.get_cart_total
             order_id = order.id
