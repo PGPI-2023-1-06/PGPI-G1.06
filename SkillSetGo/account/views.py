@@ -155,6 +155,7 @@ def close_reclamation(request,id):
     'account/dashboard.html',
     {'section': 'dashboard'})
 
+
 #Gestion de ventas
 def sales_management(request):
     users = User.objects.all()
@@ -167,3 +168,4 @@ def delete_user(request, user_id):
         return HttpResponseRedirect(reverse('sales_management'))
 
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
+

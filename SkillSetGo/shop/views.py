@@ -307,5 +307,31 @@ def process_payment(request):
         
 
 
+#seguimiento
+def tracking(request):
+    order = None
+
+    if request.method == 'POST':
+        tracking_id = request.POST.get('tracking_id')
+        try:
+            order = Order.objects.get(tracking=tracking_id)
+        except Order.DoesNotExist:
+            mensaje_error = 'No se encontró ningún pedido con este ID de seguimiento.'
+            return render(request, 'shop/tracking.html', {'mensaje_error': mensaje_error})
+
+    return render(request, 'shop/tracking.html', {'order': order})
+
+def order_list(request):
+    orders = Order.objects.all()
+    
+    return render(request, 'shop/orders.html', {'orders': orders})
+
+
+def myorders(request):  
+    if request.user.is_authenticated:
+        user_orders = Order.objects.filter(customer=request.user.customer)
+        return render(request, 'shop/myorders.html', {'user_orders': user_orders})  
+    else:
+        return render(request, 'shop/myorders.html', {'user_orders': None})  #
 def aboutUs(request):
     return render(request, 'shop/aboutUs.html')
