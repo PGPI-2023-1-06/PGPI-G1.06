@@ -1,11 +1,16 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
+
 from django.contrib.auth import authenticate, login
+from django.urls import reverse
+from django.contrib.auth.models import User
 from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm, ProfessorForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
 from shop.models import Comment, Customer, Order
+from shop.utils import cartData
+
 
 
 def user_login(request):
@@ -32,15 +37,9 @@ def dashboard(request):
 
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
+        data = cartData(request)
+        cartItems = data['cartItems']
+
         return render(request, 'account/dashboard.html', {'section': 'dashboard', 'cartItems': cartItems})
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
@@ -133,7 +132,7 @@ def register(request):
             # Create a customer object to link orders to users
             customer = Customer.objects.create(user=new_user, name=new_user.username, email=new_user.email)
             customer.save()
-            return render(request, 'account/register_done.html',{'new_user': new_user})
+            return redirect('login')
     else:
         user_form = UserRegistrationForm()
     return render(request,'account/register.html',{'user_form': user_form})
@@ -157,5 +156,16 @@ def close_reclamation(request,id):
     {'section': 'dashboard'})
 
 
+#Gestion de ventas
+def sales_management(request):
+    users = User.objects.all()
+    return render(request, 'account/administration/sales_management.html', {'users': users})
 
+def delete_user(request, user_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+        return HttpResponseRedirect(reverse('sales_management'))
+
+    return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 

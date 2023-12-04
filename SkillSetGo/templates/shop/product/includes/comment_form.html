@@ -1,6 +1,9 @@
-<h2>Add a new comment</h2>
+<h2>Nuevo comentario</h2>
 <form action="{% url "shop:product_comment" product.id product.slug %}" method="post">
-    {{ form.as_p }}
+
+    {{ form.body }}
+    Reclamación
+    {{ form.reclamation}}
     {% csrf_token %}
-    <p><input type="submit" value="Add comment"></p>
+    <p><input type="submit" value="Añadir comentario"></p>
 </form>

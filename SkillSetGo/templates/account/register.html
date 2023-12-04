@@ -1,5 +1,5 @@
 {% extends "basedos.html" %}
-{% block title %}Create an account{% endblock %}
+{% block title %}Crear cuenta{% endblock %}
 {% block content %}
 <html>
   <head>
@@ -30,13 +30,13 @@
     <div class="max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1">
         <div class="lg:w-4/5 xl:w-5/6 p-8 sm:p-12"> <!-- Adjusted width for larger card -->
             <div>
-                <img
+               <a href="/"> <img
                     src="https://i.imgur.com/vooWK6W.png"
-                    class="w-40  mx-auto" />
+                    class="w-40  mx-auto" /></a>
             </div>
             <div class="mt-12 flex flex-col items-center">
                 <h1 class="text-2xl xl:text-3xl font-extrabold">
-                    Create an account
+                    Crear cuenta
                 </h1>
                 <div class="w-full flex-1 mt-8">
                     <form method="post" class="mx-auto max-w-3xl">
@@ -50,7 +50,7 @@
                                     <path d="M20 8v6M23 11h-6" />
                                 </svg>
                                 <span class="ml-3">
-                                    Sign Up
+                                    Registatrate
                                 </span>
                             </button>
                         </div>
@@ -58,7 +58,8 @@
                 </div>
             </div>
             <p>
-                Already have an account?<a href="{% url 'login' %}" class="text-purple-700 underline"> Login now!</a>
+                
+              ¿Ya tiene una cuenta? <a href="{% url 'login' %}" class="text-purple-700 underline"> Inicia sesión!</a>
             </p>
         </div>
     </div>
