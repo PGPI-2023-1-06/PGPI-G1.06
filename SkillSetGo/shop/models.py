@@ -6,8 +6,7 @@ from django.utils.crypto import get_random_string
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200,
-    unique=True)
+    slug = models.SlugField(max_length=200)
     class Meta:
         ordering = ['name']
         indexes = [

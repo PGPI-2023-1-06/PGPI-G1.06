@@ -75,7 +75,7 @@ def update_product_post(request):
 
         return redirect('admin_product_list')
     
-    return render(request, 'account/administration/product_update.html', {'form': form})
+    return render(request, 'account/administration/product_update.html', {'form': form,'product':product_initial})
 
 
 
@@ -98,6 +98,25 @@ def category_post(request):
     return render(request, 'account/dashboard.html',
         {'category': category,
         'form': form})
+
+def update_category_form(request, id):
+    category = get_object_or_404(Category, pk=id)
+    form = CategoryForm(instance=category)
+    form.category_id=id
+    return render(request, 'account/administration/category_update.html', {'form': form,'category':category})
+
+
+def update_category_post(request):
+    category_initial = get_object_or_404(Category, id=request.POST['id'])
+    form = CategoryForm(data=request.POST)
+    if form.is_valid():
+        category = form.save(commit=False)
+        category.id=category_initial.id
+        category.save()
+
+        return redirect('admin_category_list')
+    
+    return render(request, 'account/administration/category_update.html', {'form': form,'category':category_initial})
 
 #Vistas para administrar asignaturas
 @user_passes_test(lambda u: u.is_superuser)
