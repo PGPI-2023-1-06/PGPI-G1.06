@@ -1,0 +1,17 @@
+<!-- edit_profile.html -->
+{% extends "base.html" %}
+{% block title %}Editar datos{% endblock %}
+
+{% block content %}
+  <h2>Editar Perfil</h2>
+  <form method="post" action="{% url 'edit_profile' %}">
+    {% csrf_token %}
+    Nombre de usuario
+    {{ form.username }}
+    Nombre
+    {{ form.first_name}}
+    Correo electrónico
+    {{ form.email }}
+    <button type="submit">Guardar cambios</button>
+  </form>
+{% endblock %}
