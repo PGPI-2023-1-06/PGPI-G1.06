@@ -175,6 +175,25 @@ def professor_post(request):
         {'professor': professor,
         'form': form})
 
+def update_professor_form(request, id):
+    professor = get_object_or_404(Professor, pk=id)
+    form = ProfessorForm(instance=professor)
+    form.professor_id=id
+    return render(request, 'account/administration/professor_update.html', {'form': form,'professor':professor})
+
+
+def update_professor_post(request):
+    professor_initial = get_object_or_404(Professor, id=request.POST['id'])
+    form = ProfessorForm(data=request.POST)
+    if form.is_valid():
+        professor = form.save(commit=False)
+        professor.id=professor_initial.id
+        professor.save()
+
+        return redirect('admin_professor_list')
+    
+    return render(request, 'account/administration/professor_update.html', {'form': form,'professor':professor_initial})
+
 def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)

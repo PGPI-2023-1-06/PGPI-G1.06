@@ -11,7 +11,7 @@
                     {% csrf_token %}
                     <button type="submit" style="padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
                 </form>
-                <a href="{% url 'update_product' product.id %}" style="margin-left: 10px;">Update</a>
+                <a href="{% url 'update_product' product.id %}" style="margin-left: 10px;">Actualizar</a>
             </li>
             </li>
             {% empty %}
