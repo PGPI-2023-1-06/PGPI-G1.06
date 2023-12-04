@@ -2,7 +2,28 @@
 
 <form action="/account/administration/update_product/post/" method="post">
     <input id="id" class="form-control" name="id" type="hidden" value="{{product.id}}"name ="id">
-    {{ form.as_p }}
+    Categoria
+    {{form.category}}
+    Profesor
+    {{form.professor}}
+    Asignatura
+    {{form.subject}}
+    Nombre
+    {{form.name}}
+    Url
+    {{form.slug}}
+    Descripcion
+    {{form.description}}
+    Imagen
+    {{form.image}}
+    Precio
+    {{form.price}}
+    Aforo disponible
+    {{form.quota}}
+    Fecha de inicio
+    {{form.init_dateTime}}
+    Fecha de final
+    {{form.finish_dateTime}}
     {% csrf_token %}
     <p><input type="submit" value="Actualizar producto"></p>
 </form>
