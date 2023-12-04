@@ -33,7 +33,7 @@ urlpatterns = [
     path('administration/professor/post', views.professor_post, name='professor_form'),
     #reclamations urls
     path('administration/reclamation/', views.reclamations_list, name='reclamation'),
-    path('administration/reclamation/close/<int:id>', views.close_reclamation, name='reclamation_close')
+    path('administration/reclamation/close/<int:id>', views.close_reclamation, name='reclamation_close'),
 
     #sales_management urls
     path('administration/sales_management/', views.sales_management, name='sales_management'),
