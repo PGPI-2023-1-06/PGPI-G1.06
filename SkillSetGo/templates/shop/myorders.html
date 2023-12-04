@@ -27,6 +27,7 @@
         </thead>
         <tbody>
             {% for order in user_orders %}
+                {% if order.completed == True%}
                 <tr>
                     <td>{{ order.id }}</td>
                     <td>{{ order.code}}</td>
@@ -35,6 +36,7 @@
                     <td>{{ order.date_ordered }}</td>
                     <!-- Agrega más celdas según sea necesario -->
                 </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>
