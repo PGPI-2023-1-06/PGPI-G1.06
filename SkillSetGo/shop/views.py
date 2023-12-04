@@ -195,34 +195,30 @@ def checkout(request):
         cartItems = data['cartItems']
         items = data['items']
         order = data['order']
-
+        print(items)
+        print(order)
         fisico = False
         if not request.user.is_authenticated:
             for item in items:
                 if (Product.objects.get(id = item['product']['id']).category.name == 'Fisico'):
                    fisico = True
+            for item in items:
+                product = Product.objects.get(id = item['product']['id'])
+                if product.quota <= 0:
+                    messages.error(request, 'La clase ya esta completa.')
+                    return redirect('shop:cart')
+        else:           
+            for item in items:
+                product = Product.objects.get(id = item.product.id)
+                if product.quota <= 0:
+                    messages.error(request, 'La clase ya esta completa.')
+                    return redirect('shop:cart')
 
         context = {'items':items, 'order':order, 'cartItems':cartItems, 'fisico':fisico}
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, completed=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total':0, 'get_cart_items':0}
-            cartItems = order['get_cart_items']
-        for item in items:
-            product = item.product
-            if product.quota <= 0:
-                messages.error(request, 'La clase ya esta completa.')
-                return redirect('shop:cart')
-
-        context = {'items':items, 'order':order, 'cartItems':cartItems}
         return render(request, 'shop/checkout.html', context)
 
 def process_payment(request):
-    if request.method == 'POST':
+    '''if request.method == 'POST':
         # Retrieve form data
         customer = request.user.customer
         order = get_object_or_404(Order, customer=customer, completed=False)
@@ -243,6 +239,7 @@ def process_payment(request):
         'email': email,
         'code': code
         }
+'''
 
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -265,35 +262,39 @@ def process_payment(request):
             data = cookieCart(request)
             items = data['items']
 
+            # create a customer in the background, user won't see this
             customer, created = Customer.objects.get_or_create(
                 email=email
             )
             customer.name = name
             customer.save()
-            
+            # create the Order from the cookie data
             order = Order.objects.create(
                 customer = customer,
                 completed = False
             )
-            items2 = []
+            # create the OrderItems from the cookie data
             for item in items:
-                
-
                 product = Product.objects.get(id=item['product']['id'])
-                
                 orderItem = OrderItem.objects.create(
                     product=product,
                     order=order,
                     quantity=item['quantity']
                 )
-                items2.append(orderItem)
-            
-            items2 = order.orderitem_set.all()
-            print('ok')
+            items = order.orderitem_set.all()
             total = order.get_cart_total
             order_id = order.id
             code = order.code
-        
+
+        context = {
+        'name': name,
+        'total': total,
+        'items': items,
+        'payment_method': payment_method,
+        'order_id': order_id,
+        'email': email,
+        'code': code
+        }
         # Process the payment method
         if payment_method == 'Cash':
             # Handle Cash payment logic
