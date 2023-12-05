@@ -1,20 +1,20 @@
 {% extends "base.html" %}
-{% block title %}Admin Category List{% endblock %}
+{% block title %}Administracion de categorias{% endblock %}
 {% block content %}
-<h2>Manage Existing Categories</h2>
-<a href="{% url 'dashboard' %}">&larr; Back to Dashboard</a>
+<h2>Administracion de categorias</h2>
+<a href="{% url 'dashboard' %}">&larr; Volver a mi perfil</a>
     <ul>
         {% for category in categories %}
             <li>
-                <a href="{{ category.get_absolute_url }}">{{ category.name }}</a> - Slug: {{ category.slug }}
+                <a href="{{ category.get_absolute_url }}">{{ category.name }}</a> - Url: {{ category.slug }}
                 <form action="{% url 'delete_category' category.id %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" style="padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                    <button type="submit" style="padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
                 </form>
                 <a href="{% url 'update_category' category.id %}" style="margin-left: 10px;">Actualizar</a>
             </li>
             {% empty %}
-            <li>No categories exist.</li>
+            <li>No hay categorias</li>
         
         {% endfor %}
         

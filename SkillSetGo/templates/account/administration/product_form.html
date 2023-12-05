@@ -1,27 +1,6 @@
 <h2>Añadir producto</h2>
 <form action="{% url "product_form" %}" method="post">
-    Categoria
-    {{form.category}}
-    Profesor
-    {{form.professor}}
-    Asignatura
-    {{form.subject}}
-    Nombre
-    {{form.name}}
-    Url
-    {{form.slug}}
-    Descripcion
-    {{form.description}}
-    Imagen
-    {{form.image}}
-    Precio
-    {{form.price}}
-    Aforo disponible
-    {{form.quota}}
-    Fecha de inicio
-    {{form.init_dateTime}}
-    Fecha de final
-    {{form.finish_dateTime}}
+    {{form.as_p}}
     {% csrf_token %}
     <p><input type="submit" value="Añadir producto"></p>
 </form>

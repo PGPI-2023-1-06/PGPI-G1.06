@@ -1,9 +1,6 @@
 <h2>Añadir asignatura</h2>
 <form action="{% url "subject_form" %}" method="post">
-    Nombre<br>
-    {{form.name}}<br>
-    Url<br>
-    {{form.slug}}<br>
+    {{form.as_p}}
     {% csrf_token %}
     <p><input type="submit" value="Añadir asignatura"></p>
 </form>

@@ -46,12 +46,29 @@ class UserProfileForm(UserChangeForm):
 
 class ProductForm(forms.ModelForm):
     input_formats = ['%Y-%m-%d %H:%M:%S']
-    price = forms.DecimalField(required=True, widget=forms.TextInput(attrs={"placeholder":'e.g.: 19.99'}))
-    init_dateTime = forms.CharField(required=True, widget=forms.TextInput(attrs={"placeholder":'YYYY-MM-DD HH-MM-SS'}))
-    finish_dateTime = forms.CharField(required=True, widget=forms.TextInput(attrs={"placeholder":'YYYY-MM-DD HH-MM-SS'}))
+    price = forms.DecimalField(required=True, widget=forms.TextInput(attrs={"placeholder":'e.g.: 19.99'}),label='Precio')
+    init_dateTime = forms.CharField(required=True, widget=forms.TextInput(attrs={"placeholder":'YYYY-MM-DD HH-MM-SS'}),label='Fecha de inicio')
+    finish_dateTime = forms.CharField(required=True, widget=forms.TextInput(attrs={"placeholder":'YYYY-MM-DD HH-MM-SS'}),label='Fecha de fin')
+
+
+
     class Meta:
         model = Product
-        fields = ['category', 'professor', 'subject', 'name', 'slug', 'image', 'description', 'price', 'init_dateTime', 'finish_dateTime','quota']
+        fields = ['category', 'professor', 'subject', 'name', 'slug', 'image', 'description', 'price', 'init_dateTime', 'finish_dateTime','quota','available']
+        labels = {
+            'category': 'Categoria',
+            'professor': 'Profesor',
+            'subject': 'Asignatura',
+            'name': 'Nombre',
+            'slug': 'Url',
+            'image': 'Imagen',
+            'description': 'Descripcion',
+            'price': 'Precio',
+            'available': 'Disponible',
+            'init_dateTime': 'Fecha de inicio',
+            'finish_dateTime': 'Fecha de fin',
+            'quota': 'Plazas',
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,11 +81,11 @@ class ProductForm(forms.ModelForm):
         finish_dateTime = cleaned_data.get("finish_dateTime")
 
         if init_dateTime and finish_dateTime and init_dateTime >= finish_dateTime:
-            self.add_error('init_dateTime', "Initial DateTime must be before Finish DateTime.")
+            self.add_error('init_dateTime', "La fecha de inicio debe ser anterior a la fecha de fin.")
             
         try:
             if init_dateTime <= datetime.datetime.now() or finish_dateTime <= datetime.datetime.now():
-                self.add_error('init_dateTime', "Initial DateTime and Finish DateTime can't be in the past.")
+                self.add_error('init_dateTime', "No puedes utilizar una fecha anterior al momento actual.")
         except:
             pass
        
@@ -80,35 +97,35 @@ class ProductForm(forms.ModelForm):
         try:
             price_formatted = '{:.2f}'.format(price)
             if str(price_formatted) != str(price):
-                raise forms.ValidationError("Price should be in XX.XX format.")
+                raise forms.ValidationError("El precio debe seguir este formato XX.XX.")
             if float(price_formatted) < 0:
-                raise forms.ValidationError("Price can't be negative.")
+                raise forms.ValidationError("El precio no puede ser negativo.")
         except ValueError:
-            raise forms.ValidationError("Invalid price format. Use XX.XX format.")
+            raise forms.ValidationError("El precio debe seguir este formato XX.XX.")
 
         return price
 
     def clean_init_dateTime(self):
         init_dateTime = self.cleaned_data['init_dateTime']
         if len(str(init_dateTime)) != 19:
-            raise forms.ValidationError("Invalid Date/Time format. Use YYYY-MM-DD HH-MM-SS format.")
+            raise forms.ValidationError("La fecha no sigue el formato requerido. Usa el siguiente formatoYYYY-MM-DD HH:MM:SS.")
 
         try:
             init_dateTime = datetime.datetime.strptime(init_dateTime, '%Y-%m-%d %H:%M:%S')
         except:
-            raise forms.ValidationError("Invalid Date/Time format. Use YYYY-MM-DD HH-MM-SS format.")
+            raise forms.ValidationError("La fecha no sigue el formato requerido. Usa el siguiente formatoYYYY-MM-DD HH:MM:SS.")
 
         return init_dateTime
 
     def clean_finish_dateTime(self):
         finish_dateTime = self.cleaned_data['finish_dateTime']
         if len(str(finish_dateTime)) != 19:
-            raise forms.ValidationError("Invalid Date/Time format. Use YYYY-MM-DD HH-MM-SS format.")
+            raise forms.ValidationError("La fecha no sigue el formato requerido. Usa el siguiente formatoYYYY-MM-DD HH:MM:SS.")
 
         try:
             finish_dateTime = datetime.datetime.strptime(finish_dateTime, '%Y-%m-%d %H:%M:%S')
         except:
-            raise forms.ValidationError("Invalid Date/Time format. Use YYYY-MM-DD HH-MM-SS format.")
+            raise forms.ValidationError("La fecha no sigue el formato requerido. Usa el siguiente formatoYYYY-MM-DD HH:MM:SS.")
 
         return finish_dateTime
 
@@ -116,6 +133,10 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model=Category
         fields = ['name','slug']
+        labels = {
+            'name': 'Nombre',
+            'slug':'Url',
+        }
 
 
 
@@ -123,9 +144,18 @@ class SubjetcForm(forms.ModelForm):
     class Meta:
         model=Subject
         fields = ['name','slug']
+        labels = {
+            'name': 'Nombre',
+            'slug':'Url',
+        }
 
 class ProfessorForm(forms.ModelForm):
     class Meta:
         model=Professor
         fields = ['name','surname','slug']
+        labels = {
+            'name': 'Nombre',
+            'surname':'Apellidos',
+            'slug':'Url',
+        }
 
