@@ -54,6 +54,7 @@ def product_post(request):
     form = ProductForm(data=request.POST)
     if form.is_valid():
         product = form.save(commit=False)
+        product.image=form.data['image']
         product.save()
         return render(request, 'account/dashboard.html',
             {'product': product,
@@ -73,6 +74,7 @@ def update_product_post(request):
     if form.is_valid():
         product = form.save(commit=False)
         product.id=request.POST['id']
+        product.image=form.data['image']
         product.created=product_initial.created
         product.save()
 

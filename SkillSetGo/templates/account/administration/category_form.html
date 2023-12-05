@@ -1,9 +1,6 @@
 <h2>Añadir categoria</h2>
 <form action="{% url "category_form" %}" method="post">
-    Nombre<br>
-    {{form.name}}<br>
-    Url<br>
-    {{form.slug}}<br>
+    {{form.as_p}}
     {% csrf_token %}
     <p><input type="submit" value="Añadir categoria"></p>
 </form>
