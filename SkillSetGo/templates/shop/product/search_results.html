@@ -14,7 +14,7 @@
                         <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" class="card-img-top" alt="{{ product.name }}">
                         <div class="card-body">
                             <h5 class="card-title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h5>
-                            <p class="card-text">${{ product.price }}</p>
+                            <p class="card-text">{{ product.price }}€</p>
                         </div>
                     </div>
                 </div>

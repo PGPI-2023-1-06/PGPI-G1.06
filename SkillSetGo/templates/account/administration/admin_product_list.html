@@ -6,7 +6,7 @@
     <ul>
         {% for product in products %}
             <li>
-                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a> - Price: ${{ product.price }}
+                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a> - Price: {{ product.price }}€
                 <form action="{% url 'delete_product' product.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit" style="padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>

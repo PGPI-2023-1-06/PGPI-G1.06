@@ -36,7 +36,7 @@
           </a>
           <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
           <br>
-          ${{ product.price }}
+          {{ product.price }}€
           <br>{% if product.quota > 0 %}
         <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Añadir al carrito</button>
         {% else %}
