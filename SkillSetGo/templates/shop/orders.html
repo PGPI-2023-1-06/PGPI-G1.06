@@ -21,14 +21,12 @@
                 <th>Código de la clase</th>
                 <th>Id de seguimiento</th>
                 <th>Fecha de Pedido</th>
-                <!-- Agrega más encabezados según sea necesario -->
+          
             </tr>
         </thead>
         <tbody>
-        <script>
-    // JavaScript dentro de las etiquetas <script>
-    console.log("orders", orders)
-        </script>
+    
+
             {% for order in orders %}
          
                 <tr>
@@ -38,7 +36,6 @@
                     <td>{{order.tracking}}</td>
                     <td>{{order.date_ordered }}</td>
 
-                    <!-- Agrega más celdas según sea necesario -->
                 </tr>
             {% endfor %}
         </tbody>

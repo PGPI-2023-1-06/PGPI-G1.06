@@ -13,7 +13,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 stripe.api_version = settings.STRIPE_API_VERSION
 
 def enviar_correo(total, items, order_id, email, code):
-    subject = 'Your SkillSetGo Order Details'
+    subject = 'Detalles de tu pedido de SkillSetGo'
     from_email = 'skillsetgo4@gmail.com'
     to_email = [email]
     order = get_object_or_404(Order, pk=order_id)
