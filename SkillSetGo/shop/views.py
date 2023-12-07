@@ -114,13 +114,15 @@ def index(request):
                                    Q(subject__name__icontains=search_query) |
                                    Q(professor__name__icontains=search_query))
     
+    # Apply filters based on subject criteria
     if subject_query:
         products = products.filter(subject__name__icontains=subject_query)
 
+    # Apply filters based on professor criteria
     if professor_query:
         products = products.filter(professor__name__icontains=professor_query)
 
-    # necessary for the shopping cart digit
+    # Necessary for the shopping cart digit
     if not request.user.is_superuser:
         data = cartData(request)
         cartItems = data['cartItems']
@@ -130,14 +132,56 @@ def index(request):
             'search_query': search_query,
             'subject_query': subject_query,
             'professor_query': professor_query,
-            'cartItems':cartItems,
+            'cartItems': cartItems,
         })
     
     return render(request, 'shop/product/search_results.html', {
             'products': products,
             'search_query': search_query,
             'subject_query': subject_query,
-            'professor_query': professor_query })
+            'professor_query': professor_query
+    })
+
+
+
+#FILTER BY 3 CRITERIA
+
+# views.py
+from django.shortcuts import render
+from .models import Product
+
+def filter_products(request):
+    min_price_filter = request.POST.get('min_price_filter')
+    max_price_filter = request.POST.get('max_price_filter')
+    subject_filter = request.POST.get('subject_filter')
+    professor_filter = request.POST.get('professor_filter')
+
+    products = Product.objects.all()
+
+    if min_price_filter:
+        products = products.filter(price__gte=min_price_filter)
+
+    if max_price_filter:
+        products = products.filter(price__lte=max_price_filter)
+
+    if subject_filter:
+        products = products.filter(subject__name__icontains=subject_filter)
+
+    if professor_filter:
+        products = products.filter(professor__name__icontains=professor_filter)
+
+    context = {
+        'products': products,
+        'min_price_filter': min_price_filter,
+        'max_price_filter': max_price_filter,
+        'subject_filter': subject_filter,
+        'professor_filter': professor_filter,
+    }
+
+    return render(request, 'shop/product/search_results.html', context)
+
+
+
 
 def cart(request):
     if not request.user.is_superuser:

@@ -1,30 +1,77 @@
-<!-- in search_results.html -->
+<head>
 {% extends "shop/base.html" %}
 {% load static %}
-
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+ 
+</head>
+<body>
 {% block content %}
 
 
+<div class="container">
     <div class="row">
-        {% if products %}
-            {% for product in products %}
-                {% if product.available %}
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" class="card-img-top" alt="{{ product.name }}">
-                        <div class="card-body">
-                            <h5 class="card-title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h5>
-                            <p class="card-text">${{ product.price }}</p>
+        <div class="col-md-3">
+            <form method="post" action="{% url 'shop:filter_products' %}" class="mb-4">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="min_price_filter">Precio mínimo:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
                         </div>
+                        <input type="number" class="form-control" id="min_price_filter" name="min_price_filter" value="{{ min_price_filter }}" step="0.01">
                     </div>
                 </div>
-                {% endif %}
-            {% endfor %}
-        {% else %}
-            <div class="col">
-                <p>No hay resultados.</p>
-            </div>
-        {% endif %}
-    </div>
-{% endblock %}
 
+                <div class="form-group">
+                    <label for="max_price_filter">Precio máximo:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="number" class="form-control" id="max_price_filter" name="max_price_filter" value="{{ max_price_filter }}" step="0.01">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject_filter">Asignatura:</label>
+                    <input type="text" class="form-control" id="subject_filter" name="subject_filter" value="{{ subject_filter }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="professor_filter">Profesor:</label>
+                    <input type="text" class="form-control" id="professor_filter" name="professor_filter" value="{{ professor_filter }}">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Aplicar filtros</button>
+            </form>
+        </div>
+
+        <div class="col-md-9">
+            <div class="row">
+                {% if products %}
+                    {% for product in products %}
+                        {% if product.available %}
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" class="card-img-top" alt="{{ product.name }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h5>
+                                        <p class="card-text">${{ product.price }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="col">
+                        <p>No hay resultados.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</body>
