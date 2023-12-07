@@ -72,8 +72,8 @@ def product_detail(request, id, slug):
     id=id,
     slug=slug,
     available=True)
-    # List of active comments for this post
-    comments = product.comments.filter(active=True)
+    # List of comments for this post (=posts that are not reclamations)
+    comments = product.comments.filter(reclamation=False)
     # Form for users to comment
     form = CommentForm()
     dif=product.finish_dateTime-product.init_dateTime
@@ -105,7 +105,7 @@ def product_comment(request, id,slug):
     slug=slug,
     available=True)
     comment = None
-    comments = product.comments.filter(active=True)
+    comments = product.comments.filter(reclamation=False)
     # A comment was posted
     form = CommentForm(data=request.POST)
     if form.is_valid():
@@ -115,11 +115,10 @@ def product_comment(request, id,slug):
         comment.product = product
         comment.name=request.user.username
         comment.email=request.user.email
-        if comment.reclamation==True:
-            comment.active=False
         # Save the comment to the database
         comment.save()
         form = CommentForm()
+        return redirect('/' + str(product.id) + '/' + str(product.slug))
     return render(request, 'shop/product/detail.html',
         {'product': product,
         'form': form,

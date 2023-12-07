@@ -239,19 +239,24 @@ def edit_profile(request):
 #gestion de reclamaciones
 def reclamations_list(request):
     reclamations = Comment.objects.filter(reclamation=True)
-
+    numberOpen = reclamations.filter(active=True).count()
+    numberClosed = reclamations.filter(active=False).count()
         
     return render(request,
     'account/administration/reclamation.html',
-    {'reclamations': reclamations})
+    {'reclamations': reclamations, 
+    'numberOpen': numberOpen,
+    'numberClosed': numberClosed})
 
 #Cierre de reclamaciones
 def close_reclamation(request,id):
-    Comment.objects.filter(id=id).update(reclamation=False)
-        
-    return render(request,
-    'account/dashboard.html',
-    {'section': 'dashboard'})
+    reclamation = Comment.objects.get(id=id)
+    if (reclamation.active == True):
+        reclamation.active = False
+    else:
+        reclamation.active = True
+    reclamation.save()
+    return redirect('reclamation')
 
 
 #Admin views for updating and deleting products/subjects/categories/professors
