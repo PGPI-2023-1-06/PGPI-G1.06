@@ -19,7 +19,17 @@
                         <th><h5>Artículos: <strong>{{order.get_cart_items}}</strong></h5></th>
                         <th><h5>Total:<strong> €{{order.get_cart_total}}</strong></h5></th>
                         <th>
-                            <a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'shop:checkout' %}">Checkout</a>
+                            {% if request.user.is_superuser %}
+                            <style>
+                            .btn-superuser {
+                            pointer-events: none; /* Disables click events */
+                            opacity: 0.5; /* Reduces opacity to visually indicate it's disabled */
+            
+                            }
+                            </style>
+                            {% endif %}
+                            <a style="float:right; margin:5px;" class="btn btn-success {% if request.user.is_superuser %}btn-superuser{% endif %}" {% if request.user.is_superuser %}disabled{% endif %} href="{% url 'shop:checkout' %}">Checkout</a>
+                            
                         </th>
                     </tr>
                 </table>
