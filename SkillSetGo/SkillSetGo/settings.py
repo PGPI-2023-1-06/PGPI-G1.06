@@ -118,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 #Following settings
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'product_home'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 

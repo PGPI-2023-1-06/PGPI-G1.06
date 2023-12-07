@@ -75,6 +75,8 @@
             <input class="form-control me-2 mr-sm-2" type="search" placeholder="Buscar" name="search_query" required aria-label="Search">
             <button class="btn" type="submit"><img src="{% static 'images/lupa.png' %}" width="20px" height="20px"></button>
         </form>
+       <div class='ml auto'>
+        <a href="/catalogo">Catálogo</a></div> 
         <div class="ml-auto">
             
             {% if user.is_authenticated %}
