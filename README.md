@@ -28,7 +28,20 @@ python manage.py migrate
 ```bash
 python manage.py runserver
 ```
-5. Abre el navegador y dirijete <u>http://127.0.0.1:8000/</u> para acceder a la página web.
+5. Abre el navegador y dirijete `http://127.0.0.1:8000/` para acceder a la página web.
+
+
+## Estructura del proyecto
+El proyecto sigue la siguiente estructura:
+`account`
+`payment`
+`shop`
+`SkillSetGo`
+
+
+
+
+
 
 
 
