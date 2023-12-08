@@ -33,10 +33,11 @@ python manage.py runserver
 
 ## Estructura del proyecto
 El proyecto sigue la siguiente estructura:
-`account`
-`payment`
-`shop`
-`SkillSetGo`
+
+- `account`
+- `payment`
+- `shop`
+- `SkillSetGo`
 
 
 
