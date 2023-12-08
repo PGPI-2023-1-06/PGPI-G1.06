@@ -34,10 +34,11 @@ python manage.py runserver
 ## Estructura del proyecto
 El proyecto sigue la siguiente estructura:
 
-- `account`
-- `payment`
-- `shop`
-- `SkillSetGo`
+- `SkillSetGo` Directorio base.
+- `account` Gestión de usuarios y administrador.
+- `payment` Gestión de pagos.
+- `shop` Gestión de productos para el usuario.
+
 
 
 
