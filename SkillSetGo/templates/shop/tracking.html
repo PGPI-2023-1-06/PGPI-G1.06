@@ -22,7 +22,39 @@
     button {
         padding: 5px 10px;
     }
-</style>
+
+    body {
+            font-family: Arial, sans-serif;
+        }
+
+    h2 {
+            color: #333;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+    .order-details {
+            margin-top: 20px;
+        }
+
+    .order-details p {
+            margin: 10px 0;
+        }
+
+    .order-items {
+            list-style-type: none;
+            padding: 0;
+        }
+
+    .order-items li {
+            margin-bottom: 10px;
+        }
+
+    .error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 
 <form method="post" action="{% url 'shop:tracking' %}">
     {% csrf_token %}
@@ -33,15 +65,28 @@
 
 
 
-{% if order %}
-    <h2>Detalles del pedido</h2>
-    <p>Código de la clase: {{ order.code }}</p>
-    <p>Fecha de Pedido: {{ order.date_ordered }}</p>
-    
-    <!-- Agrega otros detalles según tus necesidades -->
-{% endif %}
+ {% if order %}
+            <h2>Detalles del Pedido</h2>
+            <div class="order-details">
+                <p><strong>Código de la clase:</strong> {{ order.code }}</p>
+                <p><strong>Fecha de Pedido:</strong> {{ order.date_ordered }}</p>
+                <p><strong>Estado del Pedido:</strong> {{ order.state }}</p>
+                <!-- Agrega otros detalles según tus necesidades -->
+            </div>
+        {% endif %}
 
-{% if mensaje_error %}
-    <p>{{ mensaje_error }}</p>
-{% endif %}
- {% endblock %}
+        {% if items %}
+            <h2>Productos del Pedido</h2>
+            <ul class="order-items">
+                {% for item in items %}
+                    <li>
+                        <strong>{{ item.product.name }}</strong> - Precio: {{ item.product.price|floatformat:2 }}€ - Cantidad: {{ item.quantity }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if mensaje_error %}
+            <p class="error-message">{{ mensaje_error }}</p>
+        {% endif %}
+    {% endblock %}

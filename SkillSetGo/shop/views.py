@@ -211,8 +211,6 @@ def filter_products(request):
     return render(request, 'shop/product/search_results.html', context)
 
 
-
-
 def cart(request):
     if not request.user.is_superuser:
         data = cartData(request)
@@ -292,29 +290,6 @@ def checkout(request):
         return render(request, 'shop/checkout.html', context)
 
 def process_payment(request):
-    '''if request.method == 'POST':
-        # Retrieve form data
-        customer = request.user.customer
-        order = get_object_or_404(Order, customer=customer, completed=False)
-        items = order.orderitem_set.all()
-        total = order.get_cart_total
-        order_id = order.id
-        code = order.code
-        email = request.POST.get('email')
-        name = request.POST.get('name')
-        payment_method = request.POST.get('payment_method')
-        request.session['email'] = email
-        context = {
-        'name': name,
-        'total': total,
-        'items': items,
-        'payment_method': payment_method,
-        'order_id': order_id,
-        'email': email,
-        'code': code
-        }
-'''
-
     if request.method == 'POST':
         if request.user.is_authenticated:
             # Retrieve form data
@@ -386,21 +361,37 @@ def process_payment(request):
 #seguimiento
 def tracking(request):
     order = None
-
+    items = None
     if request.method == 'POST':
         tracking_id = request.POST.get('tracking_id')
         try:
             order = Order.objects.get(tracking=tracking_id)
+            items = order.orderitem_set.all()
         except Order.DoesNotExist:
             mensaje_error = 'No se encontró ningún pedido con este ID de seguimiento.'
             return render(request, 'shop/tracking.html', {'mensaje_error': mensaje_error})
 
-    return render(request, 'shop/tracking.html', {'order': order})
+    return render(request, 'shop/tracking.html', {'order': order , 'items':items})
+
 
 def order_list(request):
     orders = Order.objects.all()
+    order_items = OrderItem.objects.select_related('product').all()
     
-    return render(request, 'shop/orders.html', {'orders': orders})
+    return render(request, 'shop/orders.html', {'orders': orders ,'order_items': order_items})
+
+
+def change_state_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if request.method == 'POST':
+        form = ChangeStateForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            return redirect('/order_list/')
+    else:
+        form = ChangeStateForm(instance=order)
+
+    return render(request, 'shop/change_state.html', {'form': form, 'order': order})
 
 
 def myorders(request):  
@@ -408,6 +399,7 @@ def myorders(request):
         user_orders = Order.objects.filter(customer=request.user.customer)
         return render(request, 'shop/myorders.html', {'user_orders': user_orders})  
     else:
-        return render(request, 'shop/myorders.html', {'user_orders': None})  #
+        return render(request, 'shop/myorders.html', {'user_orders': None})  
+    
 def aboutUs(request):
     return render(request, 'shop/aboutUs.html')
