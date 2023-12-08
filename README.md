@@ -5,7 +5,7 @@ Este proyecto Django permite la reserva de clases en una academia.
 ## Requisitos
 
 - Python 3.10 o superior
-- Django
+- Django 4
 
 ## Instalación
 
