@@ -2,7 +2,7 @@
 
 <form action="/account/administration/update_product/post/" method="post">
     <input id="id" class="form-control" name="id" type="hidden" value="{{product.id}}"name ="id">
-    {{ form.as_p }}
+    {{form.as_p}}
     {% csrf_token %}
     <p><input type="submit" value="Actualizar producto"></p>
 </form>

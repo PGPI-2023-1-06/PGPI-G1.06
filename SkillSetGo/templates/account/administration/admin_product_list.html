@@ -1,21 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Admin Product List{% endblock %}
+{% block title %}Lista de administración de productos{% endblock %}
 {% block content %}
-<h2>Manage Published Products</h2>
-<a href="{% url 'dashboard' %}">&larr; Back to Dashboard</a>
+<h2>Administración de productos</h2>
+<a href="{% url 'dashboard' %}">&larr; Volver a Mi perfil</a>
     <ul>
         {% for product in products %}
             <li>
-                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a> - Price: ${{ product.price }}
+
+                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a> - Precio: {{ product.price }}€
                 <form action="{% url 'delete_product' product.id %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" style="padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                    <button type="submit" style="padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
                 </form>
                 <a href="{% url 'update_product' product.id %}" style="margin-left: 10px;">Actualizar</a>
             </li>
             </li>
             {% empty %}
-            <li>No products published.</li>
+            <li>No hay productos.</li>
         
         {% endfor %}
         

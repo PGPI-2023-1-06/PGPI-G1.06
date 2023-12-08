@@ -1,3 +1,4 @@
+from django.utils import timezone
 import json
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q  
@@ -39,16 +40,44 @@ def product_list(request, category_slug=None):
         'categories': categories,
         'products': products})
 
+
+def product_home(request, category_slug=None):
+    category = None
+    categories = Category.objects.all()
+    moment_now=timezone.now()
+    products = Product.objects.filter(available=True, init_dateTime__gte=moment_now).order_by('init_dateTime')[:5]
+    if category_slug:
+        category = get_object_or_404(Category,slug=category_slug)
+        products = products.filter(category=category)
+    
+    # necessary for the shopping cart digit
+    if not request.user.is_superuser:
+        data = cartData(request)
+        cartItems = data['cartItems']
+
+        return render(request,
+        'shop/product/listHome.html',
+        {'category': category,
+        'categories': categories,
+        'products': products, 
+        'cartItems': cartItems,})
+    return render(request,
+        'shop/product/listHome.html',
+        {'category': category,
+        'categories': categories,
+        'products': products})
+
 def product_detail(request, id, slug):
     product = get_object_or_404(Product,
     id=id,
     slug=slug,
     available=True)
-    # List of active comments for this post
-    comments = product.comments.filter(active=True)
+    # List of comments for this post (=posts that are not reclamations)
+    comments = product.comments.filter(reclamation=False)
     # Form for users to comment
     form = CommentForm()
-
+    dif=product.finish_dateTime-product.init_dateTime
+    duracion = round(dif.total_seconds() / 3600, 2)
     # necessary for the shopping cart digit
     if not request.user.is_superuser:
         data = cartData(request)
@@ -59,12 +88,14 @@ def product_detail(request, id, slug):
         {'product': product,
         'comments': comments,
         'form': form, 
-        'cartItems':cartItems})
+        'cartItems':cartItems,
+        'duration':duracion})
     return render(request,
         'shop/product/detail.html',
         {'product': product,
         'comments': comments,
-        'form': form})
+        'form': form,
+        'duration':duracion})
 
 @login_required
 @require_POST
@@ -74,7 +105,7 @@ def product_comment(request, id,slug):
     slug=slug,
     available=True)
     comment = None
-    comments = product.comments.filter(active=True)
+    comments = product.comments.filter(reclamation=False)
     # A comment was posted
     form = CommentForm(data=request.POST)
     if form.is_valid():
@@ -84,11 +115,10 @@ def product_comment(request, id,slug):
         comment.product = product
         comment.name=request.user.username
         comment.email=request.user.email
-        if comment.reclamation==True:
-            comment.active=False
         # Save the comment to the database
         comment.save()
         form = CommentForm()
+        return redirect('/' + str(product.id) + '/' + str(product.slug))
     return render(request, 'shop/product/detail.html',
         {'product': product,
         'form': form,

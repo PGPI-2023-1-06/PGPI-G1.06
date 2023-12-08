@@ -1,54 +1,64 @@
 {% extends "shop/base.html" %}
 {% load static %}
 {% block content %}
-{% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
-<div class="row">
-	<div class="col-lg-12">
-		<div class="box-element">
-            <a  class="btn btn-outline-dark" href="{% url 'shop:product_list' %}">&#x2190; Continua Comprando</a>
-            <br>
-            <br>
-            <table class="table">
-                <tr>
-                    <th><h5>Artículos: <strong>{{order.get_cart_items}}</strong></h5></th>
-                    <th><h5>Total:<strong> €{{order.get_cart_total}}</strong></h5></th>
-                    <th>
-                        <a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'shop:checkout' %}">Checkout</a>
-                    </th>
-                </tr>
-            </table>
-		</div>
-
-		<br>
-		<div class="box-element">
-            <div class="cart-row">
-                <div style="flex:2"></div>
-                <div style="flex:2"><strong>Artículo</strong></div>
-                <div style="flex:1"><strong>Precio</strong></div>
-                <div style="flex:1"><strong>Eliminar</strong></div>
-                <div style="flex:1"><strong>Total</strong></div>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="box-element">
+                <a  class="btn btn-outline-dark" href="{% url 'shop:product_list' %}">&#x2190; Continua Comprando</a>
+                <br>
+                <br>
+                <table class="table">
+                    <tr>
+                        <th><h5>Artículos: <strong>{{order.get_cart_items}}</strong></h5></th>
+                        <th><h5>Total:<strong> €{{order.get_cart_total}}</strong></h5></th>
+                        <th>
+                            {% if request.user.is_superuser %}
+                            <style>
+                            .btn-superuser {
+                            pointer-events: none; /* Disables click events */
+                            opacity: 0.5; /* Reduces opacity to visually indicate it's disabled */
+            
+                            }
+                            </style>
+                            {% endif %}
+                            <a style="float:right; margin:5px;" class="btn btn-success {% if request.user.is_superuser %}btn-superuser{% endif %}" {% if request.user.is_superuser %}disabled{% endif %} href="{% url 'shop:checkout' %}">Checkout</a>
+                            
+                        </th>
+                    </tr>
+                </table>
             </div>
-            {% for item in items %}
-            <div class="cart-row">
-                <div style="flex:2"><img class="row-image" src="{{item.product.image.url}}"></div>
-                <div style="flex:2"><p>{{item.product.name}}</p></div>
-                <div style="flex:1"><p>€{{item.product.price|floatformat:2}}</p></div>
-                <div style="flex:1">
-                    <p class="quantity">{{item.quantity}}</p>
-                    <div class="quantity">
-                        <img data-product={{item.product.id}} data-action='remove' class="chg-quantity update-cart" src="{% static  'images/trash.png' %}" width="16px" height="16px">
-                    </div>
-                </div>
-                <div style="flex:1"><p>€{{item.get_total}}</p></div>
-		</div>
-            {% endfor %}
-	</div>
-</div>
 
+            <br>
+            <div class="box-element">
+                <table class="cart-row">
+                    <tr>
+                        <th>Artículo</th>
+                        <th>Precio</th>
+                        <th>Eliminar</th>
+                    </tr>
+                    {% for item in items %}
+                    <tr>
+                        <td>
+                            <img class="thumbnail" src="{{ item.product.image.url }}" alt="Product Image" style="max-width: 50px; max-height: 50px;">
+                            <p><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></p>
+                        </td>
+                        <td>€{{ item.product.price|floatformat:2 }}</td>
+                        <td>
+                            <img data-product="{{ item.product.id }}" data-action="remove" class="chg-quantity update-cart" src="{% static 'images/trash.png' %}" width="16px" height="16px">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            
+            </div>
+        </div>
+    </div>
 {% endblock content %}

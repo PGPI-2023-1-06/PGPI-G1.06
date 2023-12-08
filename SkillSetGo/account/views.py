@@ -7,8 +7,9 @@ from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, S
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
-from shop.models import Comment, Customer, Order, Product, Category, Subject, Professor
+from shop.models import Comment, Customer, Order, OrderItem, Product, Category, Subject, Professor
 from shop.utils import cartData
+from django.db.models import Sum
 
 
 
@@ -54,6 +55,7 @@ def product_post(request):
     form = ProductForm(data=request.POST)
     if form.is_valid():
         product = form.save(commit=False)
+        product.image=form.data['image']
         product.save()
         return render(request, 'account/dashboard.html',
             {'product': product,
@@ -73,6 +75,10 @@ def update_product_post(request):
     if form.is_valid():
         product = form.save(commit=False)
         product.id=request.POST['id']
+        if form.data['image'] != product_initial.image and form.data['image'] !='':
+            product.image=form.data['image']
+        else:
+            product.image=product_initial.image
         product.created=product_initial.created
         product.save()
 
@@ -233,19 +239,24 @@ def edit_profile(request):
 #gestion de reclamaciones
 def reclamations_list(request):
     reclamations = Comment.objects.filter(reclamation=True)
-
+    numberOpen = reclamations.filter(active=True).count()
+    numberClosed = reclamations.filter(active=False).count()
         
     return render(request,
     'account/administration/reclamation.html',
-    {'reclamations': reclamations})
+    {'reclamations': reclamations, 
+    'numberOpen': numberOpen,
+    'numberClosed': numberClosed})
 
 #Cierre de reclamaciones
 def close_reclamation(request,id):
-    Comment.objects.filter(id=id).update(reclamation=False)
-        
-    return render(request,
-    'account/dashboard.html',
-    {'section': 'dashboard'})
+    reclamation = Comment.objects.get(id=id)
+    if (reclamation.active == True):
+        reclamation.active = False
+    else:
+        reclamation.active = True
+    reclamation.save()
+    return redirect('reclamation')
 
 
 #Admin views for updating and deleting products/subjects/categories/professors
@@ -308,15 +319,33 @@ def delete_professor(request, professor_id):
 
 
 #Gestion de ventas
-def sales_management(request):
+def users_management(request):
     users = User.objects.all()
-    return render(request, 'account/administration/sales_management.html', {'users': users})
+    return render(request, 'account/administration/users_management.html', {'users': users})
 
 def delete_user(request, user_id):
     if request.method == 'POST':
         user = get_object_or_404(User, id=user_id)
         user.delete()
-        return HttpResponseRedirect(reverse('sales_management'))
+        return HttpResponseRedirect(reverse('users_management'))
 
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
+def class_history(request):
+    customers = Customer.objects.all()
+    for customer in customers:
+        completed_orders = customer.orders.filter(completed=True)
+        return render(request, 'account/administration/class_history.html', {'customers': customers})
+    
+@login_required
+def sales_management(request):
+    if request.user.is_superuser:
+        return render(request, 'account/administration/sales_management.html')
+    else:
+        return render(request, 'account/dashboard.html', {'section': 'dashboard'})
+    
+def sales_report(request):
+    completed_orders = Order.objects.filter(completed=True)
+    total_sales = sum(order.get_cart_total for order in completed_orders)
+    sales_per_product = OrderItem.objects.values('product__name').annotate(total=Sum('quantity')).order_by('-total')    
+    return render(request, 'account/administration/sales_report.html', {'total_sales': total_sales, 'sales_per_product': sales_per_product})

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h2>Lista de estudiantes y sus clases reservadas</h2>
+<table>
+    <tr>
+      <th>Estudiante</th>
+      <th>ID Pedido</th>
+      <th>Fecha</th>
+      <th>Código</th>
+      <th>Seguimiento</th>
+    </tr>
+    {% for customer in customers %}
+      {% for order in customer.orders.all %}
+        <tr>
+          <td>{{ customer.user.username }}</td>
+          <td>{{ order.id }}</td>
+          <td>{{ order.date_ordered }}</td>
+          <td>{{ order.code }}</td>
+          <td>{{ order.tracking }}</td>
+        </tr>
+      {% endfor %}
+    {% empty %}
+      <tr>
+        <td colspan="5">No hay clases reservadas.</td>
+      </tr>
+    {% endfor %}
+</table>
+{% endblock %}

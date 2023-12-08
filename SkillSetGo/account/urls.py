@@ -2,6 +2,7 @@ from django.urls import path, include
 from . import views
 from django.contrib.auth import views as auth_views
 from .forms import EmailAuthenticationForm
+from shop import views as viewsShop
 
 urlpatterns = [
     #path('login/', views.user_login, name='login'),
@@ -22,6 +23,7 @@ urlpatterns = [
 
     path('', include('django.contrib.auth.urls')),
     path('', views.dashboard, name='dashboard'),
+    path('../',viewsShop.product_home, name='product_home'),
 
     #administration listar urls
     path('administration/admin_product_list/', views.admin_product_list, name='admin_product_list'),
@@ -61,6 +63,9 @@ urlpatterns = [
 
     #sales_management urls
     path('administration/sales_management/', views.sales_management, name='sales_management'),
-     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('administration/users_management/', views.users_management, name='users_management'),
+    path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('administration/class_history/', views.class_history, name='class_history'),
+    path('administration/sales_report/', views.sales_report, name='sales_report'),
 
 ]
