@@ -1,0 +1,6 @@
+<h2>Add a new category</h2>
+<form action="{% url "subject_form" %}" method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="Add subjetc"></p>
+</form>

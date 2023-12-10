@@ -4,6 +4,13 @@
 {% if category %}{{ category.name }}{% else %}Products{% endif %}
 {% endblock %}
 {% block content %}
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
 <div id="sidebar">
     <h3>Categories</h3>
     <ul>
@@ -30,7 +37,10 @@
         <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
         <br>
         ${{ product.price }}
+        <br>
+        <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
     </div>
     {% endfor %}
+    
 </div>
 {% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+{% block content %}
+ {% if user.is_superuser %}
+    {% include "account/administration/professor_form.html" %}
+{% else %}
+{% endif %}
+{% endblock %}
