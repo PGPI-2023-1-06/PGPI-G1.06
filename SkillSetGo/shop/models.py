@@ -124,6 +124,7 @@ class Order(models.Model):
         blank=True,
         editable=False,
         default=get_code)
+    payment_method = models.CharField(max_length=200)
 #aaa
     def __str__(self):
         return str(self.id)
