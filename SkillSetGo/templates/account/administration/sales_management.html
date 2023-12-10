@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+{% if user.is_superuser %}
+<style>
+.admin-links {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+.admin-links a {
+    text-decoration: none;
+    color: #007bff; /* Cambia el color según tu preferencia */
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    background-color: #f8f9fa; /* Cambia el color según tu preferencia */
+    transition: background-color 0.3s ease-in-out;
+}
+
+.admin-links a:hover {
+    background-color: #cce5ff; /* Cambia el color según tu preferencia */
+
+}
+</style>
+
+    <div class="admin-links">
+        <a href="/account/administration/sales_report/">Informe de ventas</a>
+        <a href="/account/administration/class_history">Historial de clases reservadas</a>
+    </div>
+{% endif %}
+
+{% endblock %}

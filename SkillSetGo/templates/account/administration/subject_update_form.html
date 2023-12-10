@@ -1,0 +1,7 @@
+<h2>Actualizar</h2>
+<form action="{% url "subject_update_form" %}" method="post">
+<input id="id" class="form-control" name="id" type="hidden" value="{{subject.id}}"name ="id">
+    {{form.as_p}}
+    {% csrf_token %}
+    <p><input type="submit" value="Actualizar"></p>
+</form>

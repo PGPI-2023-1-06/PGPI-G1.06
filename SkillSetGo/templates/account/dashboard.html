@@ -1,14 +1,80 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
- <!--<h1>Dashboard</h1>-->
- <p>Welcome!</p>
- {% if user.is_superuser %}
-    <p>¡Eres un superusuario!</p>
-    <a href = "/account/administration/product">Add Product</a>
-    <a href = "/account/administration/category">Add Category</a>
-    <a href = "/account/administration/subject">Add Subject</a>
-    <a href = "/account/administration/professor">Add Professor</a>
-    <a href = "/account/administration/reclamation">Reclamations</a>
+ <style>
+
+.admin-links {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.admin-links a {
+    text-decoration: none;
+    color: #007bff; /* Cambia el color según tu preferencia */
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    background-color: #f8f9fa; /* Cambia el color según tu preferencia */
+    transition: background-color 0.3s ease-in-out;
+}
+
+.admin-links a:hover {
+    background-color: #cce5ff; /* Cambia el color según tu preferencia */
+
+
+}
+
+.user-profile {
+        display: flex;
+        align-items: center;
+    }
+
+ 
+
+ .user-details {
+        flex-grow: 1;
+    }
+ 
+ </style>
+ <body>
+{% if not user.is_superuser %}
+    
+    <div class="user-profile">
+        <div class="circular-avatar">
+            <img src="/static/images/avatar1.png" width="150px" height="150px" alt="Avatar">
+        </div>
+        <div class="user-details">
+            <p class="user-name">{{ user.first_name }}</p>
+            <p class="user-email">{{ user.email }}</p>
+            <p class="user-registered">Registrado desde: {{ user.date_joined|date:"F j, Y" }}</p>
+        </div>
+</div>
+     <div class="admin-links">
+        <a href="../myorders" class="my-orders-link">Mis pedidos</a>
+        <a href ="{% url 'edit_profile' %}">Editar perfil <img src="/static/images/settings.png" width="32px" height="32px"></a>
+    </div>
+    
+
+
 {% endif %}
+
+{% if user.is_superuser %}
+    <div class="admin-links">
+        <a href="/account/administration/product">Añadir Producto</a>
+        <a href="/account/administration/category">Añadir Categoría</a>
+        <a href = "/account/administration/sales_management">Gestion de ventas</a>
+        <a href = "/account/administration/users_management">Gestion de usuarios</a>
+        <a href="/account/administration/subject">Añadir Asignatura</a>
+        <a href="/account/administration/professor">Añadir Profesor</a>
+        <a href="/account/administration/reclamation">Reclamaciones</a>
+        <a href = "/account/administration/admin_product_list">Administración de productos</a>
+        <a href = "/account/administration/admin_category_list">Administración de categorías</a>
+        <a href = "/account/administration/admin_subject_list">Administración de asignaturas</a>
+        <a href = "/account/administration/admin_professor_list">Administración de profesores</a>
+        <a href="../order_list">Seguimiento de Pedidos</a>
+    </div>
+{% endif %}
+
 {% endblock %}
+</body>

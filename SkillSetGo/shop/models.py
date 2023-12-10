@@ -6,8 +6,7 @@ from django.utils.crypto import get_random_string
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200,
-    unique=True)
+    slug = models.SlugField(max_length=200)
     class Meta:
         ordering = ['name']
         indexes = [
@@ -25,8 +24,7 @@ class Category(models.Model):
 class Professor(models.Model):
     name = models.CharField(max_length=200)
     surname = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200,
-    unique=True)
+    slug = models.SlugField(max_length=200)
     class Meta:
         ordering = ['name']
         indexes = [
@@ -39,8 +37,7 @@ class Professor(models.Model):
     
 class Subject(models.Model):
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200,
-    unique=True)
+    slug = models.SlugField(max_length=200)
     class Meta:
         ordering = ['name']
         indexes = [
@@ -57,7 +54,7 @@ class Product(models.Model):
     subject = models.ForeignKey(Subject,related_name='products',on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200)
-    image = models.ImageField(upload_to='products/%Y/%m/%d',blank=True,default='../media/noimage.jpg')
+    image = models.ImageField(upload_to='products/%Y/%m/%d',blank=True , default="noimage.jpg")
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10,decimal_places=2)
     available = models.BooleanField(default=True)
@@ -116,6 +113,9 @@ def get_code():
         code = get_random_string(length=8)
         return code
 
+def get_tracking_id():
+    return get_random_string(length=10, allowed_chars='abcdefghijklmnopqrstuvwxyz0123456789')
+
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     date_ordered = models.DateTimeField(auto_now_add=True)
@@ -127,6 +127,23 @@ class Order(models.Model):
         default=get_code)
     payment_method = models.CharField(max_length=200)
 #aaa
+    STATE_CHOICES = (
+        ('En Espera', 'En Espera'),
+        ('Pendiente de pago', 'Pendiente de pago'),
+        ('Pagado', 'Pagado'),
+        ('Cancelado', 'Cancelado'),
+    )
+
+    state = models.CharField(max_length=20, choices=STATE_CHOICES, default='En Espera')
+    #seguimiento
+    tracking = models.CharField(
+        max_length=10,
+        blank=True,
+        editable=False,
+        default=get_tracking_id,
+        unique=True  # Para asegurar que cada ID de seguimiento sea único
+    )
+
     def __str__(self):
         return str(self.id)
 

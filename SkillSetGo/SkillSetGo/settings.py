@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 #STATIC files
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -26,7 +26,7 @@ STATIC_URL = 'static/'
 SECRET_KEY = 'django-insecure-7r*)=f0=$8=bh!eo#dxv!$@_jo^%*mymb4%$68xv!n-!2(i)d%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
+DEBUG = True
 
 ALLOWED_HOSTS = ['.up.railway.app', '127.0.0.1', 'localhost']
 CSRF_TRUSTED_ORIGINS=['https://pgpi-g106-production.up.railway.app']
@@ -118,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 #Following settings
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'product_home'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 

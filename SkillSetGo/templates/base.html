@@ -39,18 +39,32 @@
         <a class="navbar-brand" href="/"><img src="https://i.imgur.com/vooWK6W.png" style="width: 120px; height: auto;"></a>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="form-inline my-2 my-lg-0" method="POST" role="search" action="{% url 'shop:index' %}" >
-                {% csrf_token %}
-                <input class="form-control me-2 mr-sm-2" type="search" placeholder="Search for something" name="search_query" required aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
+        <form class="form-inline my-2 my-lg-0" method="POST" role="search" action="{% url 'shop:index' %}" >
+            {% csrf_token %}
+            <input class="form-control me-2 mr-sm-2" type="search" placeholder="Buscar" name="search_query" required aria-label="Search">
+            <button class="btn " type="submit"><img src="{% static 'images/lupa.png' %}" width="20px" height="20px"></button>
+        </form>
+
+        <div class='ml auto'>
+        <a href="/catalogo">Catálogo</a></div> 
+        
             <div class="ml-auto">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}">Log out</a>
+                    <a href="{% url 'logout' %}">Cerrar Sesión</a>
                 {% else %}
                 <a href="{% url 'login' %}">Log in</a>
                 {% endif %}
             </div>
+            <div  class="ml-auto">
+            <a href="{% url 'shop:tracking' %}">Seguimiento</a>
+            </div>
+
+            
+        <div class="cart ml-auto">
+            <a href="/aboutUs">Sobre nosotros</a>
+        </div>
+         
+
 
             <div class="cart ml-auto">
                 <a href="{% url 'shop:cart' %}">
@@ -61,7 +75,7 @@
         
             </div>
         </nav>
-{%endif%}
+{% endif %}
     
 <!-- Bootstrap JS and dependencies (jQuery, Popper.js) -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -75,7 +89,7 @@
         {% endblock %}
         </div>
 
-<script type="text/javascript" src="{%static 'js.cart.js'%}"></script>
+
 
 
 </body>

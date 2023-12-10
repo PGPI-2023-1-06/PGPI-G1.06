@@ -1,24 +1,105 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-Reclamations
+Reclamaciones
 {% endblock %}
-{% block content %}
 
-<div id="main" class="reclamation-list">
-    <h1>Reclamations</h1>
-    {% for reclamation in reclamations %}
-    <div class="item">
-        <h2>Name: {{ reclamation.name }}
-        </h2>
-        <h2>
-        Email: {{ reclamation.email }}
-        </h2>
-        Reclamation: {{ reclamation.body }}
-        <a href="close/{{ reclamation.id }}" >
-            <button>Close reclamation</button>
-        </a>
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="box-element">
+                <a  class="btn btn-outline-dark" href="{% url 'dashboard' %}">&#x2190; Volver al Dashboard</a>
+                <br>
+                <br>
+                <table class="table">
+                    <tr>
+                        <th><h5>Reclamaciones: <strong>{{reclamations|length}}</strong></h5></th>
+                        <th><h5>Abiertas:<strong> {{numberOpen}}</strong></h5></th>
+                        <th><h5>Procesadas:<strong> {{numberClosed}}</strong></h5></th>
+                    </tr>
+                </table>
+            </div>
+
+            <br>
+            <div class="box-element">
+                <table class="cart-row">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Nombre</th>
+                        <th>Correo:</th>
+                        <th>Fecha:</th>
+                        <th>Contenido:</th>
+                        <th>Abierta:</th>
+                        <th>Acción:</th>
+                    </tr>
+                    {% for reclamation in reclamations %}
+                    <tr>
+                        <td> 
+                            <p><a href="{{ reclamation.product.get_absolute_url }}">{{ reclamation.product.name }}</a></p>
+                        </td>
+                        <td> {{ reclamation.name }} </td>
+                        <td> {{ reclamation.email }} </td>
+                        <td> {{ reclamation.created }} </td>
+                        <td>  {{ reclamation.body|slice:":200" }}
+                            {% if reclamation.body|length > 100 %}
+                                <!-- don't mind the "errors", code works fine -->
+                                <span id="more_{{ forloop.counter }}">... <a href="#" onclick="toggleVisibility({{ forloop.counter }}); return false;">Ver más</a></span>
+                                <span id="full_{{ forloop.counter }}" style="display:none;">{{ reclamation.body }}</span>
+                                <a href="#" id="less_{{ forloop.counter }}" style="display:none;" onclick="toggleVisibility({{ forloop.counter }}); return false;">Ver menos</a>
+                            {% endif %}</td>
+                        <td>  {% if reclamation.active %}
+                            <span style="color: red;">Si</span>
+                            {% else %}  
+                            <span style="color: green;">No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if reclamation.active %}
+                            <a href="close/{{ reclamation.id }}" >
+                                <button style="background-color: #b38ac4; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 5px; transition-duration: 0.4s; cursor: pointer;"
+                                    onmouseover="this.style.backgroundColor='#8e44ad'"
+                                    onmouseout="this.style.backgroundColor='#b38ac4'">
+                                    Cerrar reclamación
+                                </button>
+
+                            </a>
+                            {% else %}  
+                            <a href="close/{{ reclamation.id }}" >
+                                <button style="background-color: #b38ac4; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 5px; transition-duration: 0.4s; cursor: pointer;"
+                                    onmouseover="this.style.backgroundColor='#8e44ad'"
+                                    onmouseout="this.style.backgroundColor='#b38ac4'">
+                                    Reabrir reclamación
+                                </button>
+                            {% endif %}
+                        </td>  
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            
+            </div>
+        </div>
     </div>
-    {% endfor %}
-</div>
-{% endblock %}
+    <script>
+        function toggleVisibility(id) {
+        var moreText = document.getElementById('more_' + id);
+        var fullText = document.getElementById('full_' + id);
+        var lessText = document.getElementById('less_' + id);
+
+        if (moreText.style.display === 'none') {
+            moreText.style.display = 'inline';
+            fullText.style.display = 'none';
+            lessText.style.display = 'none';
+        } else {
+            moreText.style.display = 'none';
+            fullText.style.display = 'inline';
+            lessText.style.display = 'inline';
+        }
+    }
+    </script>
+{% endblock content %}
+
+
+
+
+

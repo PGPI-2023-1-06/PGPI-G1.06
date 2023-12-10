@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h2>Informe de ventas</h2>
+<p>Ventas totales: {{ total_sales }}</p>
+<h3>Ventas por producto</h3>
+<ul>
+  {% for sale in sales_per_product %}
+    <li>{{ sale.product__name }}: {{ sale.total }}</li>
+  {% endfor %}
+  {% for sale in sales_per_customer %}
+    <li>{{ sale.customer__user__username }}: {{ sale.total }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

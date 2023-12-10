@@ -1,3 +1,4 @@
+
 {% extends "shop/base.html" %} {% load static %} {% block title %}Confirmación de Pedido{% endblock %} {% block content %}
 
 <head>
@@ -33,18 +34,7 @@
                 ELEMENTS 
         ------------------------------------- */
         a { color: #2BA6CB;}
-        
-        .btn {
-            text-decoration:none;
-            color:#FFF;
-            background-color:#666;
-            width:80%;
-            padding:15px 10%;
-            font-weight:bold;
-            text-align:center;
-            cursor:pointer;
-            display:inline-block;
-        }
+
         
         p.callout {
             padding:15px;
@@ -253,7 +243,7 @@
                                 <br/>
                                 <h2>Detalles del Pedido</h2>
 
-                                <p>Su pedido con ID {{ order.id }} ha sido procesado.</p>
+                                <p>Su pedido con id de seguimiento <strong>{{ order.tracking }}</strong> ha sido procesado.</p>
                                 <p>Aquí están los detalles de su pedido:</p>
 
                                 <br/>
@@ -308,4 +298,9 @@
         </tr>
     </table>
     <!-- /FOOTER -->
+
+    <script type='text/javascript'>
+        cart = {}
+        document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
+    </script>
     {% endblock %}

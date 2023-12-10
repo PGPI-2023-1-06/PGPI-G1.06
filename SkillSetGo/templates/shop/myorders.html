@@ -1,0 +1,58 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Pedidos</title>
+</head>
+<body>
+{% block content%}
+    {% if user.is_authenticated %}
+    <h1>Listado de tus Pedidos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID de Pedido</th>
+                <th>Código de la clase</th>
+                <th>Id de Seguimiento</th>
+                <th>Pagado</th>
+                <th>Fecha de Pedido</th>
+                <th>Productos</th>
+                <th>Estado del pedido</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in user_orders %}
+                {% if order.completed == True%}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.code}}</td>
+                    <td>{{ order.tracking}}</td>
+                    <td>{{ order.get_cart_total }}</td>
+                    <td>{{ order.date_ordered }}</td>
+                    <td>
+                            <ul>
+                                {% for item in order.orderitem_set.all %}
+                                    <li>{{ item.product.name }} - Cantidad: {{ item.quantity }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    <td>{{ order.state }}</td>
+                    
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Debes iniciar sesión para ver tus pedidos.</p>
+{% endif %}
+{% endblock %}
+</body>
+</html>

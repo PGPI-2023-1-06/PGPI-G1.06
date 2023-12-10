@@ -13,7 +13,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 stripe.api_version = settings.STRIPE_API_VERSION
 
 def enviar_correo(total, items, order_id, email, code):
-    subject = 'Your SkillSetGo Order Details'
+    subject = 'Detalles de tu pedido de SkillSetGo'
     from_email = 'skillsetgo4@gmail.com'
     to_email = [email]
     order = get_object_or_404(Order, pk=order_id)
@@ -74,15 +74,20 @@ def payment_completed(request, order_id):
     items = order.orderitem_set.all()
     code = order.code
     total = order.get_cart_total
-    email = request.session['email'] 
+    email = order.customer.email
     enviar_correo(total, items, order_id, email, code)
     # Decrement product quota for each item in the order
     for item in items:
         product = item.product
         product.quota -= 1
         product.save()
+
+    # Mark Order as complete, so that user gets assigned a new order with an empty cart
+    order.completed = True
+    order.save()
     return render(request, 'payment/completed.html', {'order': order,
         'items': items, 'code': code})
+    
 
 def payment_canceled(request):
     return render(request, 'payment/canceled.html')
