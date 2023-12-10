@@ -125,7 +125,16 @@ class Order(models.Model):
         blank=True,
         editable=False,
         default=get_code)
-    payment_method = models.CharField(max_length=200)
+    payment_method = models.CharField(max_length=200, default='Stripe')
+#aaa
+    STATE_CHOICES = (
+        ('En Espera', 'En Espera'),
+        ('Pendiente de pago', 'Pendiente de pago'),
+        ('Pagado', 'Pagado'),
+        ('Cancelado', 'Cancelado'),
+    )
+
+    state = models.CharField(max_length=20, choices=STATE_CHOICES, default='En Espera')
     #seguimiento
     tracking = models.CharField(
         max_length=10,
