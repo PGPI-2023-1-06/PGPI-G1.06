@@ -125,6 +125,8 @@ class Order(models.Model):
         blank=True,
         editable=False,
         default=get_code)
+    payment_method = models.CharField(max_length=200)
+#aaa
     STATE_CHOICES = (
         ('En Espera', 'En Espera'),
         ('Pendiente de pago', 'Pendiente de pago'),
@@ -141,7 +143,6 @@ class Order(models.Model):
         default=get_tracking_id,
         unique=True  # Para asegurar que cada ID de seguimiento sea único
     )
-
 
     def __str__(self):
         return str(self.id)
