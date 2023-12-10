@@ -125,6 +125,7 @@ class Order(models.Model):
         blank=True,
         editable=False,
         default=get_code)
+    payment_method = models.CharField(max_length=200)
     #seguimiento
     tracking = models.CharField(
         max_length=10,
