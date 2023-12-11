@@ -6,3 +6,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['body','reclamation']
 
+class ChangeStateForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['state']
