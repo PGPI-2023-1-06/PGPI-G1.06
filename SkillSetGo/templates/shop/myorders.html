@@ -22,6 +22,8 @@
                 <th>Id de Seguimiento</th>
                 <th>Pagado</th>
                 <th>Fecha de Pedido</th>
+                <th>Productos</th>
+                <th>Estado del pedido</th>
                
             </tr>
         </thead>
@@ -34,6 +36,14 @@
                     <td>{{ order.tracking}}</td>
                     <td>{{ order.get_cart_total }}</td>
                     <td>{{ order.date_ordered }}</td>
+                    <td>
+                            <ul>
+                                {% for item in order.orderitem_set.all %}
+                                    <li>{{ item.product.name }} - Cantidad: {{ item.quantity }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    <td>{{ order.state }}</td>
                     
                 </tr>
                 {% endif %}
