@@ -118,6 +118,15 @@ def get_code():
 def get_tracking_id():
     return get_random_string(length=10, allowed_chars='abcdefghijklmnopqrstuvwxyz0123456789')
 
+# def is_paid(self):
+#         if self.payment_method == 'Stripe' and self.completed:
+#             return 'Pagado'
+#         elif self.payment_method == 'Cash':
+#             earliest_product_time = self.orderitem_set.order_by('product__init_dateTime').first().product.init_dateTime
+#             if timezone.now() > earliest_product_time:
+#                 return 'No pagado'
+#         self.save()
+
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     date_ordered = models.DateTimeField(auto_now_add=True)
@@ -150,7 +159,7 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.id)
-
+    
     @property 
     def get_cart_total(self):
         orderitems = self.orderitem_set.all()
@@ -171,15 +180,6 @@ class Order(models.Model):
             if item.product.category.name == 'Online':
                 cat = False
         return cat
-    
-    def is_paid(self):
-        if self.payment_method == 'Stripe' and self.completed:
-            self.payment_status = 'Pagado'
-        elif self.payment_method == 'Cash':
-            earliest_product_time = self.orderitem_set.order_by('product__init_dateTime').first().product.init_dateTime
-            if timezone.now() > earliest_product_time:
-                self.payment_status = 'No pagado'
-        self.save()
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, blank=True, null=True)

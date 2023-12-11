@@ -10,7 +10,7 @@ from django.http import HttpResponseBadRequest
 from shop.models import Comment, Customer, Order, OrderItem, Product, Category, Subject, Professor
 from shop.utils import cartData
 from django.db.models import Sum
-
+from django.utils import timezone
 
 
 def user_login(request):
@@ -331,10 +331,23 @@ def delete_user(request, user_id):
 
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
-def class_history(request):
-    customers = Customer.objects.all()
+def update_payment_status(customers):
     for customer in customers:
         customer.completed_orders = customer.orders.filter(completed=True)
+        for order in customer.completed_orders:
+            if order.payment_method == 'Stripe':
+                order.payment_status = 'Pagado'
+                order.save()
+            elif order.payment_method == 'Cash':
+                earliest_product_time = order.orderitem_set.order_by('product__init_dateTime').first().product.init_dateTime
+                if timezone.now() > earliest_product_time:
+                    order.payment_status = 'No pagado'
+                    order.save()
+
+def class_history(request):
+    customers = Customer.objects.all()
+    update_payment_status(customers)
+            # order.order_items = order.order_items.all()
     return render(request, 'account/administration/class_history.html', {'customers': customers})
 
 def view_order(request, order_id):
@@ -363,7 +376,8 @@ def sales_management(request):
         return render(request, 'account/dashboard.html', {'section': 'dashboard'})
     
 def sales_report(request):
-    completed_orders = Order.objects.filter(completed=True)
+    update_payment_status(Customer.objects.all())
+    completed_orders = Order.objects.filter(completed=True, payment_status='Pagado')
     total_sales = sum(order.get_cart_total for order in completed_orders)
     sales_per_product = OrderItem.objects.values('product__name').annotate(total=Sum('quantity')).order_by('-total')    
     return render(request, 'account/administration/sales_report.html', {'total_sales': total_sales, 'sales_per_product': sales_per_product})
