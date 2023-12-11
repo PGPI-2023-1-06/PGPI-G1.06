@@ -9,6 +9,7 @@
       <th>Fecha</th>
       <th>Código</th>
       <th>Seguimiento</th>
+      <th>Estado</th>
       <th>Acciones</th>
     </tr>
     {% for customer in customers %}
@@ -19,10 +20,17 @@
           <td>{{ order.date_ordered }}</td>
           <td>{{ order.code }}</td>
           <td>{{ order.tracking }}</td>
-          <td><form method="post" action="{% url 'delete_order' order.id %}"  style="text-align: right;">
+          <td>{{ order.payment_status}}</td>
+          <td>
+            <form method="post" action="{% url 'delete_order' order.id %}"  style="text-align: right;">
             {% csrf_token %}
             <input type="submit" value="Eliminar Pedido">
-          </form></td>
+            </form>
+            <form method="post" action="{% url 'mark_as_paid' order.id %}">
+            {% csrf_token %}
+            <input type="submit" value="Marcar como Pagado">
+            </form>
+          </td>
         </tr>
       {% endfor %}
     {% empty %}

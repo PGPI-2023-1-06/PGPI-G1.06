@@ -371,6 +371,8 @@ def process_payment(request):
         'email': email,
         'code': code
         }
+        order.payment_method = payment_method
+        order.save()
         # Process the payment method
         if payment_method == 'Cash':
             # Handle Cash payment logic

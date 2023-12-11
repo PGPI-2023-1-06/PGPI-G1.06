@@ -348,6 +348,13 @@ def delete_order(request, order_id):
         return redirect('class_history')
     return redirect('class_history')
 
+@require_POST
+def mark_as_paid(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.payment_status = 'Pagado'
+    order.save()
+    return redirect(class_history)
+
 @login_required
 def sales_management(request):
     if request.user.is_superuser:
