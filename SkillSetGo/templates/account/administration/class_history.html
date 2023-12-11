@@ -9,15 +9,20 @@
       <th>Fecha</th>
       <th>Código</th>
       <th>Seguimiento</th>
+      <th>Acciones</th>
     </tr>
     {% for customer in customers %}
-      {% for order in customer.orders.all %}
+      {% for order in customer.completed_orders %}
         <tr>
           <td>{{ customer.user.username }}</td>
-          <td>{{ order.id }}</td>
+          <td><a href="{% url 'view_order' order.id %}">{{ order.id }}</a></td>
           <td>{{ order.date_ordered }}</td>
           <td>{{ order.code }}</td>
           <td>{{ order.tracking }}</td>
+          <td><form method="post" action="{% url 'delete_order' order.id %}"  style="text-align: right;">
+            {% csrf_token %}
+            <input type="submit" value="Eliminar Pedido">
+          </form></td>
         </tr>
       {% endfor %}
     {% empty %}

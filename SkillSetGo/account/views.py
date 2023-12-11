@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .forms import LoginForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm, ProfessorForm ,UserProfileForm
+from .forms import LoginForm, OrderForm, ProductForm, UserRegistrationForm, CategoryForm, SubjetcForm, ProfessorForm ,UserProfileForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseBadRequest
@@ -334,9 +334,20 @@ def delete_user(request, user_id):
 def class_history(request):
     customers = Customer.objects.all()
     for customer in customers:
-        completed_orders = customer.orders.filter(completed=True)
-        return render(request, 'account/administration/class_history.html', {'customers': customers})
-    
+        customer.completed_orders = customer.orders.filter(completed=True)
+    return render(request, 'account/administration/class_history.html', {'customers': customers})
+
+def view_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    return render(request, 'account/administration/view_order.html', {'order': order})
+
+def delete_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if request.method == 'POST':
+        order.delete()
+        return redirect('class_history')
+    return redirect('class_history')
+
 @login_required
 def sales_management(request):
     if request.user.is_superuser:

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from shop.models import Product, Category, Subject, Professor
+from shop.models import Order, Product, Category, Subject, Professor
 from django.core.exceptions import ValidationError
 import datetime, re
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
@@ -178,4 +178,18 @@ class ProfessorForm(forms.ModelForm):
             'surname':'Apellidos',
             'slug':'Url',
         }
+
+class OrderForm(forms.ModelForm):
+    product = forms.ModelMultipleChoiceField(
+        queryset=Product.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
+    class Meta:
+        model = Order
+        fields = ['customer', 'product']
+
+    def __init__(self, *args, **kwargs):
+        super(OrderForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            self.fields['product'].initial = self.instance.product.all()
 

@@ -67,5 +67,6 @@ urlpatterns = [
     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
     path('administration/class_history/', views.class_history, name='class_history'),
     path('administration/sales_report/', views.sales_report, name='sales_report'),
-
+    path('administration/view_order/<int:order_id>/', views.view_order, name='view_order'),
+    path('delete_order/<int:order_id>/', views.delete_order, name='delete_order'),
 ]
