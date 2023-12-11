@@ -10,6 +10,7 @@
 </head>
 <body>
 {% block content %}
+<a href="{% url 'dashboard' %}">&larr; Volver a Mi perfil</a>
     <h1>Cambiar Estado de Pedido</h1>
     <form method="post" action="/change_state_order/{{order.id}}/">
         {% csrf_token %}

@@ -2,6 +2,7 @@
 {% block title %}{% endblock %}
 {% block content %}
  {% if user.is_superuser %}
+ <a href="{% url 'dashboard' %}">&larr; Volver a Mi perfil</a>
     {% include "account/administration/product_form.html" %}
 {% else %}
 {% endif %}

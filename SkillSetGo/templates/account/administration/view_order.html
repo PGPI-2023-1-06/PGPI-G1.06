@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+
 <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;margin-top: 20px; margin-bottom: 20px;">
     <h2 style="color: #343a40; margin-bottom: 10px;">Detalles del Pedido {{ order.id }}</h2>
     <div style="margin-bottom: 10px;">
@@ -43,8 +44,10 @@
     {% csrf_token %}
     <button type="submit" class ="btn btn-danger" value="Eliminar Pedido">Eliminar Pedido</button>
 </form>
+{% if not order.payment_status == 'Pagado' %}
 <form method="post" action="{% url 'mark_as_paid' order.id %}" style="text-align: right; margin-right: 150px; margin-top: -40px;">
   {% csrf_token %}
   <input type="submit" value="Marcar como Pagado">
 </form>
+{% endif %}
 {% endblock %}

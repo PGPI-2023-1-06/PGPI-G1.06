@@ -12,6 +12,7 @@
 </head>
 <body>
 {% block content%}
+<a href="{% url 'dashboard' %}">&larr; Volver a Mi perfil</a>
     {% if user.is_authenticated %}
     <h1>Listado de tus Pedidos</h1>
     <table>

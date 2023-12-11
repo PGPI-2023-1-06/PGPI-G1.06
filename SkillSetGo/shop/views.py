@@ -353,6 +353,8 @@ def process_payment(request):
             return redirect(f'/payment/completed/{order.id}/', context)
         elif payment_method == 'Stripe':
             # Handle Stripe payment logic
+            order.state='Pagado'
+            order.save()
             return redirect(f'/payment/process/{order.id}/', context)
         else:
             messages.error(request, 'Invalid payment method selected.')
@@ -369,6 +371,7 @@ def tracking(request):
         try:
             order = Order.objects.get(tracking=tracking_id)
             items = order.orderitem_set.all()
+           
         except Order.DoesNotExist:
             mensaje_error = 'No se encontró ningún pedido con este ID de seguimiento.'
             return render(request, 'shop/tracking.html', {'mensaje_error': mensaje_error})

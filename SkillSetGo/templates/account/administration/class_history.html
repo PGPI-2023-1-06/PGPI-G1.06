@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+<a href="{% url 'dashboard' %}">&larr; Volver a Mi perfil</a>
 <h2>Lista de estudiantes y sus clases reservadas</h2>
 <table>
     <tr>
@@ -26,10 +27,12 @@
             {% csrf_token %}
             <input type="submit" value="Eliminar Pedido">
             </form>
+            {% if not order.payment_status == 'Pagado' %}
             <form method="post" action="{% url 'mark_as_paid' order.id %}">
             {% csrf_token %}
             <input type="submit" value="Marcar como Pagado">
             </form>
+            {% endif %}
           </td>
         </tr>
       {% endfor %}
