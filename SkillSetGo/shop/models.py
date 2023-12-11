@@ -1,7 +1,9 @@
+from datetime import datetime
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
+from django.utils import timezone
 
 # Create your models here.
 class Category(models.Model):
@@ -126,6 +128,8 @@ class Order(models.Model):
         editable=False,
         default=get_code)
     payment_method = models.CharField(max_length=200, default='Stripe')
+    payment_status = models.CharField(max_length=200, default='No pagado')
+
 #aaa
     STATE_CHOICES = (
         ('En Espera', 'En Espera'),
@@ -167,6 +171,15 @@ class Order(models.Model):
             if item.product.category.name == 'Online':
                 cat = False
         return cat
+    
+    def is_paid(self):
+        if self.payment_method == 'Stripe' and self.completed:
+            self.payment_status = 'Pagado'
+        elif self.payment_method == 'Cash':
+            earliest_product_time = self.orderitem_set.order_by('product__init_dateTime').first().product.init_dateTime
+            if timezone.now() > earliest_product_time:
+                self.payment_status = 'No pagado'
+        self.save()
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, blank=True, null=True)

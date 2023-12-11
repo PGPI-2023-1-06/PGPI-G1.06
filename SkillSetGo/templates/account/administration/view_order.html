@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h2>Detalles del Pedido {{ order.id }}</h2>
+<p>Estudiante: {{ order.customer.user.username }}</p>
+<p>Fecha: {{ order.date_ordered }}</p>
+<p>Código: {{ order.code }}</p>
+<p>Seguimiento: {{ order.tracking }}</p>
+<h3>Productos en el Pedido</h3>
+<table>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio</th>
+    </tr>
+    {% for orderitem in order.orderitem_set.all %}
+        <tr>
+          <td>{{ orderitem.product.name }}</td>
+          <td>{{ orderitem.quantity }}</td>
+          <td>{{ orderitem.get_total }}€</td>
+        </tr>
+    {% empty %}
+      <tr>
+        <td colspan="2">No hay productos en este pedido.</td>
+      </tr>
+    {% endfor %}
+</table>
+<h5 style="margin-top: 20px;">Precio total: {{ order.get_cart_total  }}€</h5>
+<form method="post" action="{% url 'delete_order' order.id %}"  style="text-align: right; margin-top: -40px;">
+    {% csrf_token %}
+    <input type="submit" value="Eliminar Pedido">
+</form>
+{% endblock %}
