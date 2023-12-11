@@ -22,7 +22,7 @@
           <td>{{ order.tracking }}</td>
           <td>{{ order.payment_status}}</td>
           <td>
-            <form method="post" action="{% url 'delete_order' order.id %}"  style="text-align: right;">
+            <form method="post" action="{% url 'delete_order' order.id %}">
             {% csrf_token %}
             <input type="submit" value="Eliminar Pedido">
             </form>

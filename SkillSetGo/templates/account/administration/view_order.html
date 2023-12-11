@@ -6,6 +6,7 @@
 <p>Fecha: {{ order.date_ordered }}</p>
 <p>Código: {{ order.code }}</p>
 <p>Seguimiento: {{ order.tracking }}</p>
+<p>Estado: {{ order.payment_status}}</p>
 <h3>Productos en el Pedido</h3>
 <table>
     <tr>
@@ -29,5 +30,9 @@
 <form method="post" action="{% url 'delete_order' order.id %}"  style="text-align: right; margin-top: -40px;">
     {% csrf_token %}
     <input type="submit" value="Eliminar Pedido">
+</form>
+<form method="post" action="{% url 'mark_as_paid' order.id %}" style="text-align: right; margin-right: 150px; margin-top: -40px;">
+  {% csrf_token %}
+  <input type="submit" value="Marcar como Pagado">
 </form>
 {% endblock %}
